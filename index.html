@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon-building.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-building.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edifício Marechal Castelo Branco - Boas-Vindas</title>
+    <meta
+      name="description"
+      content="Bem-vindo ao Edifício Marechal Castelo Branco em Copacabana. Guia completo para novos moradores com regras, contatos e informações importantes."
+    />
+    <meta
+      name="keywords"
+      content="Edifício Marechal Castelo Branco, Copacabana, condomínio, regras, boas-vindas"
+    />
+
+    <!-- Meta tags para melhorar qualidade de impressão -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="color-scheme" content="light" />
+    <style>
+      @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        @page {
+          size: A4;
+          margin: 0.5cm;
+        }
+
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
+          max-width: 100% !important;
+          height: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
