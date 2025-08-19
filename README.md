@@ -18,23 +18,27 @@
 ## ✨ Funcionalidades
 
 ### 🌐 **Landing Page Responsiva**
+
 - **Design Moderno** com Tailwind CSS
 - **Menu Responsivo** para mobile/desktop
 - **CTAs Diretos** para WhatsApp, telefone e e-mail
 - **Seções Interativas** organizadas
 
 ### 📄 **Panfleto PDF**
+
 - **Layout Tríptico** profissional
 - **Download Direto** com botão dedicado
 - **Otimizado A4** para impressão
 
 ### 🔧 **Painel Admin**
+
 - **Autenticação Simples** (admin/admin)
 - **Editor Completo** de conteúdo
 - **Gerenciamento de Dados** persistente
 - **Interface Intuitiva** com abas
 
 ### 📱 **Integrações Automáticas**
+
 - **WhatsApp** com mensagens pré-definidas
 - **Ligações Diretas** pelos botões
 - **E-mail** com contexto automático
@@ -43,6 +47,7 @@
 ## 🚀 Início Rápido
 
 ### Instalação
+
 ```bash
 # Clone o repositório
 git clone https://github.com/Kaiojen/landpagecondominio.git
@@ -56,6 +61,7 @@ npm run dev
 ```
 
 ### Build para Produção
+
 ```bash
 # Gere os arquivos otimizados
 npm run build
@@ -91,18 +97,21 @@ npm run preview
 ## 🌐 Deploy
 
 ### Netlify (Recomendado)
+
 ```bash
 npm run build
 # Arraste pasta dist/ para netlify.com
 ```
 
 ### Vercel
+
 ```bash
-npm run build  
+npm run build
 # Upload para vercel.com
 ```
 
 ### GitHub Pages
+
 Configurado automaticamente via GitHub Actions
 
 ## 🔐 Credenciais Admin
@@ -112,11 +121,11 @@ Configurado automaticamente via GitHub Actions
 
 ## 📱 Contatos Configurados
 
-| Serviço | Telefone | WhatsApp | E-mail |
-|---------|----------|----------|--------|
-| Portaria | (21) 3489-6664 | ✅ | - |
-| Administradora | (21) 2323-4423 | ✅ | atendimento.locacao@estasa.com.br |
-| TCL/TLP | (91) 98406-3859 | ✅ | - |
+| Serviço        | Telefone        | WhatsApp | E-mail                            |
+| -------------- | --------------- | -------- | --------------------------------- |
+| Portaria       | (21) 3489-6664  | ✅       | -                                 |
+| Administradora | (21) 2323-4423  | ✅       | atendimento.locacao@estasa.com.br |
+| TCL/TLP        | (91) 98406-3859 | ✅       | -                                 |
 
 ## 🎨 Personalização
 
