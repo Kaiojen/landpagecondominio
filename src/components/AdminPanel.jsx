@@ -32,6 +32,7 @@ import {
   Shield,
   CheckCircle,
   AlertTriangle,
+  UserPlus,
 } from "lucide-react";
 
 export const AdminPanel = ({ isOpen, onClose }) => {
@@ -85,13 +86,13 @@ export const AdminPanel = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+      <DialogContent className="max-w-6xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full overflow-hidden p-4 sm:p-6">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Settings className="h-5 w-5 text-blue-600" />
             Painel de Administração
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm sm:text-base">
             Edite as informações do condomínio que aparecem na landing page.
           </DialogDescription>
         </DialogHeader>
@@ -147,26 +148,58 @@ export const AdminPanel = ({ isOpen, onClose }) => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="building" className="gap-2">
-              <Home className="h-4 w-4" />
-              Edifício
+          <TabsList className="grid w-full grid-cols-6 h-auto">
+            <TabsTrigger
+              value="building"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Edifício</span>
+              <span className="sm:hidden">Ed.</span>
             </TabsTrigger>
-            <TabsTrigger value="contacts" className="gap-2">
-              <Phone className="h-4 w-4" />
-              Contatos
+            <TabsTrigger
+              value="contacts"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Contatos</span>
+              <span className="sm:hidden">Tel.</span>
             </TabsTrigger>
-            <TabsTrigger value="salao" className="gap-2">
-              <Users className="h-4 w-4" />
-              Salão
+            <TabsTrigger
+              value="salao"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Salão</span>
+              <span className="sm:hidden">Sal.</span>
             </TabsTrigger>
-            <TabsTrigger value="rules" className="gap-2">
-              <Shield className="h-4 w-4" />
-              Regras
+            <TabsTrigger
+              value="rules"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Regras</span>
+              <span className="sm:hidden">Reg.</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="newresident"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Cadastro</span>
+              <span className="sm:hidden">Cad.</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="texts"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Textos</span>
+              <span className="sm:hidden">Txt.</span>
             </TabsTrigger>
           </TabsList>
 
-          <div className="max-h-[60vh] overflow-y-auto mt-4">
+          <div className="max-h-[65vh] overflow-y-auto mt-4">
             <TabsContent value="building" className="space-y-4">
               <Card>
                 <CardHeader>
@@ -523,6 +556,944 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                       }
                       rows={2}
                     />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="texts" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Textos do Sistema - Salão de Festas</CardTitle>
+                  <CardDescription>
+                    Edite todos os textos que aparecem na seção do salão de
+                    festas e churrasqueira.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Título da Seção</Label>
+                      <Input
+                        value={formData.systemTexts?.salaoFestas?.title || ""}
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.title",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>Subtítulo</Label>
+                      <Input
+                        value={
+                          formData.systemTexts?.salaoFestas?.subtitle || ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.subtitle",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Título "Como Reservar"</Label>
+                      <Input
+                        value={
+                          formData.systemTexts?.salaoFestas?.reservationTitle ||
+                          ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.reservationTitle",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>Título "Regras de Uso"</Label>
+                      <Input
+                        value={
+                          formData.systemTexts?.salaoFestas?.rulesTitle || ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.rulesTitle",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Passos da Reserva</h4>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label>Passo 1 - Título</Label>
+                          <Input
+                            value={
+                              formData.systemTexts?.salaoFestas?.step1Title ||
+                              ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.salaoFestas.step1Title",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>Passo 1 - Descrição</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.salaoFestas
+                                ?.step1Description || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.salaoFestas.step1Description",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label>Passo 3 - Título</Label>
+                          <Input
+                            value={
+                              formData.systemTexts?.salaoFestas?.step3Title ||
+                              ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.salaoFestas.step3Title",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>Passo 3 - Descrição</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.salaoFestas
+                                ?.step3Description || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.salaoFestas.step3Description",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Regras de Limpeza</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Título das Regras de Chaves</Label>
+                        <Input
+                          value={
+                            formData.systemTexts?.salaoFestas?.keyRulesTitle ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.salaoFestas.keyRulesTitle",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Descrição das Chaves</Label>
+                        <Textarea
+                          value={
+                            formData.systemTexts?.salaoFestas
+                              ?.keyRulesDescription || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.salaoFestas.keyRulesDescription",
+                              e.target.value
+                            )
+                          }
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Título das Regras de Limpeza</Label>
+                      <Input
+                        value={
+                          formData.systemTexts?.salaoFestas
+                            ?.cleaningRulesTitle || ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.cleaningRulesTitle",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Descrição das Regras de Limpeza</Label>
+                      <Textarea
+                        value={
+                          formData.systemTexts?.salaoFestas
+                            ?.cleaningRulesDescription || ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.cleaningRulesDescription",
+                            e.target.value
+                          )
+                        }
+                        rows={2}
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Lista de Itens de Limpeza (um por linha)</Label>
+                      <Textarea
+                        value={
+                          formData.systemTexts?.salaoFestas?.cleaningRules?.join(
+                            "\n"
+                          ) || ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.cleaningRules",
+                            e.target.value.split("\n")
+                          )
+                        }
+                        rows={7}
+                        placeholder="Limpo e organizado&#10;Mesas e cadeiras limpas e empilhadas&#10;Churrasqueira limpa&#10;..."
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Outros Textos</h4>
+                    <div>
+                      <Label>Mensagem de Aviso sobre Pagamento</Label>
+                      <Textarea
+                        value={
+                          formData.systemTexts?.salaoFestas?.paymentWarning ||
+                          ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.paymentWarning",
+                            e.target.value
+                          )
+                        }
+                        rows={2}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Botão "Verificar Disponibilidade"</Label>
+                        <Input
+                          value={
+                            formData.systemTexts?.salaoFestas
+                              ?.verifyAvailabilityButton || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.salaoFestas.verifyAvailabilityButton",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Botão "Ligar para Portaria"</Label>
+                        <Input
+                          value={
+                            formData.systemTexts?.salaoFestas
+                              ?.callPortariaButton || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.salaoFestas.callPortariaButton",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Mensagem WhatsApp Padrão</Label>
+                      <Textarea
+                        value={
+                          formData.systemTexts?.salaoFestas?.whatsappMessage ||
+                          ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.salaoFestas.whatsappMessage",
+                            e.target.value
+                          )
+                        }
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Textos do Sistema - Outras Seções</CardTitle>
+                  <CardDescription>
+                    Edite títulos e textos das outras seções do site.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Seção de Contatos</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Título da Seção</Label>
+                        <Input
+                          value={formData.systemTexts?.contacts?.title || ""}
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.contacts.title",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Subtítulo</Label>
+                        <Input
+                          value={formData.systemTexts?.contacts?.subtitle || ""}
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.contacts.subtitle",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Seção de Regras</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Título da Seção</Label>
+                        <Input
+                          value={formData.systemTexts?.rules?.title || ""}
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.title",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Subtítulo</Label>
+                        <Input
+                          value={formData.systemTexts?.rules?.subtitle || ""}
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.subtitle",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">
+                      Botões da Página Inicial
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Botão "Ver Regras"</Label>
+                        <Input
+                          value={
+                            formData.systemTexts?.hero?.viewRulesButton || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.hero.viewRulesButton",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label>Botão "Falar com Portaria"</Label>
+                        <Input
+                          value={
+                            formData.systemTexts?.hero?.talkToPortariaButton ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.hero.talkToPortariaButton",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Títulos das Seções</h4>
+                    <div>
+                      <Label>Título "Mensagem de Boas-Vindas"</Label>
+                      <Input
+                        value={formData.systemTexts?.welcome?.title || ""}
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.welcome.title",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Textos das Regras</h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Texto "Visualizando X regras"</Label>
+                        <Input
+                          value={formData.systemTexts?.rules?.viewingText || ""}
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.viewingText",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Use {total} para o número"
+                        />
+                      </div>
+                      <div>
+                        <Label>Texto "X regras importantes"</Label>
+                        <Input
+                          value={
+                            formData.systemTexts?.rules?.totalRulesText || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.totalRulesText",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Use {total} para o número"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Título - TCL/TLP</Label>
+                      <Input
+                        value={formData.systemTexts?.rules?.tclTitle || ""}
+                        onChange={(e) =>
+                          updateFormData(
+                            "systemTexts.rules.tclTitle",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-3">
+                      <h5 className="font-medium text-xs text-gray-600">
+                        Resumos das Regras
+                      </h5>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label>TCL - Resumo</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.rules?.tclSummary || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.rules.tclSummary",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label>Estacionamento - Resumo</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.rules?.parkingSummary || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.rules.parkingSummary",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label>Mudanças - Resumo</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.rules?.movingSummary || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.rules.movingSummary",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label>Lixo - Resumo</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.rules?.trashSummary || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.rules.trashSummary",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label>Pets - Resumo</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.rules?.petsSummary || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.rules.petsSummary",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label>Segurança - Resumo</Label>
+                          <Textarea
+                            value={
+                              formData.systemTexts?.rules?.securitySummary || ""
+                            }
+                            onChange={(e) =>
+                              updateFormData(
+                                "systemTexts.rules.securitySummary",
+                                e.target.value
+                              )
+                            }
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h5 className="font-medium text-xs text-gray-600">
+                        Descrições Completas
+                      </h5>
+
+                      <div>
+                        <Label>TCL - Descrição Completa</Label>
+                        <Textarea
+                          value={formData.systemTexts?.rules?.tclDetails || ""}
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.tclDetails",
+                              e.target.value
+                            )
+                          }
+                          rows={4}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Estacionamento - Descrição</Label>
+                        <Textarea
+                          value={
+                            formData.systemTexts?.rules?.parkingDetails || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.parkingDetails",
+                              e.target.value
+                            )
+                          }
+                          rows={3}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Segurança - Descrição</Label>
+                        <Textarea
+                          value={
+                            formData.systemTexts?.rules?.securityDetails || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.securityDetails",
+                              e.target.value
+                            )
+                          }
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h5 className="font-medium text-xs text-gray-600">
+                        Mensagens WhatsApp
+                      </h5>
+
+                      <div>
+                        <Label>TCL - Mensagem WhatsApp</Label>
+                        <Textarea
+                          value={
+                            formData.systemTexts?.rules?.tclWhatsappMessage ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.tclWhatsappMessage",
+                              e.target.value
+                            )
+                          }
+                          rows={2}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Mudanças - Mensagem WhatsApp</Label>
+                        <Textarea
+                          value={
+                            formData.systemTexts?.rules
+                              ?.movingWhatsappMessage || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "systemTexts.rules.movingWhatsappMessage",
+                              e.target.value
+                            )
+                          }
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Aba Cadastro de Novos Moradores */}
+            <TabsContent value="newresident" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    Formulário de Cadastro de Novos Moradores
+                  </CardTitle>
+                  <CardDescription>
+                    Configure o formulário de inscrição de novos moradores e
+                    suas opções de envio.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Configurações Gerais */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="newresident-enabled">
+                        Formulário Ativo
+                      </Label>
+                      <select
+                        id="newresident-enabled"
+                        className="w-full p-2 border rounded-lg"
+                        value={
+                          formData.newResidentForm?.enabled ? "true" : "false"
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "newResidentForm.enabled",
+                            e.target.value === "true"
+                          )
+                        }
+                      >
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="newresident-title">
+                        Título do Formulário
+                      </Label>
+                      <Input
+                        id="newresident-title"
+                        value={formData.newResidentForm?.title || ""}
+                        onChange={(e) =>
+                          updateFormData(
+                            "newResidentForm.title",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="newresident-subtitle">Subtítulo</Label>
+                      <Textarea
+                        id="newresident-subtitle"
+                        value={formData.newResidentForm?.subtitle || ""}
+                        onChange={(e) =>
+                          updateFormData(
+                            "newResidentForm.subtitle",
+                            e.target.value
+                          )
+                        }
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Configurações de Envio */}
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold mb-4">
+                      Configurações de Envio
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="whatsapp-number">
+                          Número WhatsApp (Administração)
+                        </Label>
+                        <Input
+                          id="whatsapp-number"
+                          value={
+                            formData.newResidentForm?.sendTo?.whatsapp || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "newResidentForm.sendTo.whatsapp",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex: 21986505733"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Apenas números, sem +55
+                        </p>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="admin-email">
+                          E-mail Administração
+                        </Label>
+                        <Input
+                          id="admin-email"
+                          type="email"
+                          value={
+                            formData.newResidentForm?.sendTo?.adminEmail || ""
+                          }
+                          onChange={(e) =>
+                            updateFormData(
+                              "newResidentForm.sendTo.adminEmail",
+                              e.target.value
+                            )
+                          }
+                          placeholder="admin@edificio.com.br"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <Label htmlFor="preferred-method">
+                        Método Preferido de Envio
+                      </Label>
+                      <select
+                        id="preferred-method"
+                        className="w-full p-2 border rounded-lg"
+                        value={
+                          formData.newResidentForm?.sendTo?.preferredMethod ||
+                          "whatsapp"
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "newResidentForm.sendTo.preferredMethod",
+                            e.target.value
+                          )
+                        }
+                      >
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="email">E-mail</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Mensagem de Sucesso */}
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold mb-4">Mensagens</h4>
+                    <div>
+                      <Label htmlFor="success-message">
+                        Mensagem de Sucesso
+                      </Label>
+                      <Textarea
+                        id="success-message"
+                        value={
+                          formData.newResidentForm?.messages?.success || ""
+                        }
+                        onChange={(e) =>
+                          updateFormData(
+                            "newResidentForm.messages.success",
+                            e.target.value
+                          )
+                        }
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Seções do Formulário */}
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold mb-4">Seções do Formulário</h4>
+                    <div className="space-y-4">
+                      {Object.entries(
+                        formData.newResidentForm?.fields || {}
+                      ).map(([sectionKey, section]) => (
+                        <div
+                          key={sectionKey}
+                          className="border rounded-lg p-4 bg-gray-50"
+                        >
+                          <div className="flex items-start space-x-3 mb-3">
+                            <input
+                              type="checkbox"
+                              id={`section-${sectionKey}`}
+                              checked={section.enabled || false}
+                              onChange={(e) =>
+                                updateFormData(
+                                  `newResidentForm.fields.${sectionKey}.enabled`,
+                                  e.target.checked
+                                )
+                              }
+                              className="rounded mt-1"
+                            />
+                            <div className="flex-1">
+                              <Label
+                                htmlFor={`section-title-${sectionKey}`}
+                                className="text-sm"
+                              >
+                                Título da Seção
+                              </Label>
+                              <Input
+                                id={`section-title-${sectionKey}`}
+                                value={section.title || ""}
+                                onChange={(e) =>
+                                  updateFormData(
+                                    `newResidentForm.fields.${sectionKey}.title`,
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1"
+                                placeholder="Ex: Informações Pessoais"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Campos da seção */}
+                          <div className="space-y-2">
+                            <h6 className="text-xs font-medium text-gray-600">
+                              Campos ({section.fields?.length || 0}):
+                            </h6>
+                            {section.fields?.map((field, fieldIndex) => (
+                              <div
+                                key={field.name}
+                                className="flex items-center space-x-2 text-sm"
+                              >
+                                <input
+                                  type="checkbox"
+                                  id={`field-${sectionKey}-${field.name}`}
+                                  checked={field.enabled || false}
+                                  onChange={(e) =>
+                                    updateFormData(
+                                      `newResidentForm.fields.${sectionKey}.fields.${fieldIndex}.enabled`,
+                                      e.target.checked
+                                    )
+                                  }
+                                  className="rounded"
+                                />
+                                <div className="flex-1">
+                                  <Input
+                                    value={field.label || ""}
+                                    onChange={(e) =>
+                                      updateFormData(
+                                        `newResidentForm.fields.${sectionKey}.fields.${fieldIndex}.label`,
+                                        e.target.value
+                                      )
+                                    }
+                                    className="text-xs"
+                                    placeholder="Label do campo"
+                                  />
+                                </div>
+                                <span
+                                  className={`px-2 py-1 text-xs rounded ${
+                                    field.required
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-gray-100 text-gray-600"
+                                  }`}
+                                >
+                                  {field.required ? "Obrigatório" : "Opcional"}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Configure os títulos das seções, ative/desative seções e
+                      campos conforme necessário.
+                    </p>
                   </div>
                 </CardContent>
               </Card>

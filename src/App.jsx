@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { DataProvider, useData } from "./contexts/DataContext";
 import { LoginModal } from "./components/LoginModal";
 import { AdminPanel } from "./components/AdminPanel";
+import { NewResidentForm } from "./components/NewResidentForm";
 import {
   Home,
   Users,
@@ -35,6 +36,7 @@ import {
   Timer,
   Settings,
   Lock,
+  UserPlus,
 } from "lucide-react";
 
 // Componente interno que pode usar os contextos
@@ -46,6 +48,7 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showNewResidentForm, setShowNewResidentForm] = useState(false);
 
   const { isAuthenticated } = useAuth();
   const { data } = useData();
@@ -638,6 +641,16 @@ function AppContent() {
 
             {/* CTAs Header */}
             <div className="hidden md:flex items-center space-x-2">
+              {data.newResidentForm?.enabled && (
+                <button
+                  onClick={() => setShowNewResidentForm(true)}
+                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  title="Cadastro de Novo Morador"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Cadastrar
+                </button>
+              )}
               <button
                 onClick={handleAdminAccess}
                 className="flex items-center px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
@@ -695,6 +708,15 @@ function AppContent() {
                 >
                   Contatos
                 </button>
+                {data.newResidentForm?.enabled && (
+                  <button
+                    onClick={() => setShowNewResidentForm(true)}
+                    className="flex items-center py-2 text-green-600 hover:text-green-700 transition-colors"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Cadastrar Morador
+                  </button>
+                )}
                 <button
                   onClick={handleAdminAccess}
                   className="flex items-center py-2 text-gray-600 hover:text-gray-700 transition-colors"
@@ -754,19 +776,31 @@ function AppContent() {
               onClick={() => scrollToSection("regras")}
               className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
             >
-              Ver Regras Importantes
+              {data.systemTexts?.hero?.viewRulesButton ||
+                "Ver Regras Importantes"}
             </button>
+            {data.newResidentForm?.enabled && (
+              <button
+                onClick={() => setShowNewResidentForm(true)}
+                className="flex items-center bg-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+              >
+                <UserPlus className="w-5 h-5 mr-2" />
+                Sou Novo Morador
+              </button>
+            )}
             <button
               onClick={() =>
                 handleWhatsAppContact(
-                  "2134896664",
-                  "Olá! Sou novo morador do Edifício Marechal Castelo Branco e gostaria de esclarecer algumas dúvidas."
+                  data.contacts.portaria.whatsapp,
+                  data.systemTexts?.contacts?.moradorWhatsappMessage ||
+                    "Olá! Sou morador do Edifício Marechal Castelo Branco."
                 )
               }
               className="flex items-center bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Falar com Portaria
+              {data.systemTexts?.hero?.talkToPortariaButton ||
+                "Falar com Portaria"}
             </button>
           </div>
         </div>
@@ -779,7 +813,7 @@ function AppContent() {
             <div className="flex items-center mb-6">
               <Heart className="w-8 h-8 text-blue-900 mr-4" />
               <h2 className="text-3xl font-bold text-blue-900">
-                Mensagem de Boas-Vindas
+                {data.systemTexts?.welcome?.title || "Mensagem de Boas-Vindas"}
               </h2>
             </div>
             <div className="bg-blue-50 p-6 rounded-lg relative">
@@ -805,18 +839,25 @@ function AppContent() {
             <div className="flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-blue-900 mr-4" />
               <h2 className="text-3xl font-bold text-blue-900">
-                📜 Regras e Dicas Importantes
+                {data.systemTexts?.rules?.title || "📋 Regras Importantes"}
               </h2>
             </div>
             <p className="text-gray-600">
-              Clique em cada item para ver mais detalhes
+              {data.systemTexts?.rules?.subtitle ||
+                "Orientações essenciais para uma boa convivência"}
             </p>
             <div className="mt-4 flex items-center justify-center">
               <div className="bg-blue-100 px-4 py-2 rounded-full">
                 <span className="text-blue-800 font-semibold text-sm">
                   {expandedSection
-                    ? `Visualizando 1 de 7 regras`
-                    : "7 regras importantes"}
+                    ? (
+                        data.systemTexts?.rules?.viewingText ||
+                        "Visualizando 1 de {total} regras"
+                      ).replace("{total}", "7")
+                    : (
+                        data.systemTexts?.rules?.totalRulesText ||
+                        "{total} regras importantes"
+                      ).replace("{total}", "7")}
                 </span>
               </div>
             </div>
@@ -827,68 +868,91 @@ function AppContent() {
               {
                 id: "tcl",
                 icon: <DollarSign className="w-6 h-6 text-blue-600" />,
-                title: "💰 Taxa de Limpeza Pública (TCL/TLP)",
+                title:
+                  data.systemTexts?.rules?.tclTitle ||
+                  "💰 Taxa de Limpeza Pública (TCL/TLP)",
                 summary:
+                  data.systemTexts?.rules?.tclSummary ||
                   "Responsabilidade do ocupante conforme Portaria C Ex nº 1846/2022",
                 details:
+                  data.systemTexts?.rules?.tclDetails ||
                   "Conforme Portaria C Ex nº 1846/2022, o permissionário (ocupante) é responsável pelo pagamento da Taxa de Coleta de Lixo (TCL) e da Taxa de Limpeza Pública (TLP). A TLP é um tributo municipal destinado a remunerar os serviços de coleta e destinação de resíduos sólidos. O pagamento deve ser feito usando o número de inscrição do seu imóvel.",
                 cta: () =>
                   handleWhatsAppContact(
-                    "919840638559",
-                    "Olá Cap Mantovani! Preciso de informações sobre TCL/TLP para meu apartamento no Edifício Marechal Castelo Branco."
+                    data.contacts.tcl.whatsapp,
+                    data.systemTexts?.rules?.tclWhatsappMessage ||
+                      "Olá Cap Mantovani! Preciso de informações sobre TCL/TLP para meu apartamento no Edifício Marechal Castelo Branco."
                   ),
               },
               {
                 id: "estacionamento",
                 icon: <Car className="w-6 h-6 text-blue-600" />,
-                title: "🚗 Vagas de Estacionamento",
-                summary: "Distribuição por antiguidade dos militares",
+                title:
+                  data.systemTexts?.rules?.parkingTitle ||
+                  "🚗 Vagas de Estacionamento",
+                summary:
+                  data.systemTexts?.rules?.parkingSummary ||
+                  "Distribuição por antiguidade dos militares",
                 details:
+                  data.systemTexts?.rules?.parkingDetails ||
                   "As vagas de estacionamento são distribuídas por antiguidade dos militares. Respeite sempre a vaga designada e não estacione em locais não autorizados.",
               },
               {
                 id: "mudancas",
                 icon: <Home className="w-6 h-6 text-blue-600" />,
-                title: "📦 Mudanças",
-                summary: "Agendamento obrigatório com síndico",
-                details:
-                  "Todas as mudanças devem ser agendadas com o síndico e seguir as normas municipais. Entre em contato com a portaria para agendar sua mudança.",
+                title: data.systemTexts?.rules?.movingTitle || "📦 Mudanças",
+                summary:
+                  data.systemTexts?.rules?.movingSummary ||
+                  "Agendamento obrigatório com síndico",
+                details: data.rules.movingRules,
                 cta: () =>
                   handleWhatsAppContact(
-                    "2134896664",
-                    "Olá! Preciso agendar uma mudança no Edifício Marechal Castelo Branco."
+                    data.contacts.portaria.whatsapp,
+                    data.systemTexts?.rules?.movingWhatsappMessage ||
+                      "Olá! Preciso agendar uma mudança no Edifício Marechal Castelo Branco."
                   ),
               },
               {
                 id: "lixo",
                 icon: <Trash2 className="w-6 h-6 text-blue-600" />,
-                title: "🗑️ Descarte de Lixo",
-                summary: "Ensacar todo lixo, orgânico no duto",
-                details:
-                  "Todo lixo deve ser ensacado. O lixo orgânico, além de ensacado, deve ser colocado no duto de lixo. Mantenha a área limpa e organize.",
+                title:
+                  data.systemTexts?.rules?.trashTitle || "🗑️ Descarte de Lixo",
+                summary:
+                  data.systemTexts?.rules?.trashSummary ||
+                  "Ensacar todo lixo, orgânico no duto",
+                details: data.rules.trashRules,
               },
               {
                 id: "silencio",
                 icon: <Clock className="w-6 h-6 text-blue-600" />,
-                title: "🔇 Horário de Silêncio",
-                summary: "Das 22h às 8h",
-                details:
-                  "O horário de silêncio é das 22h às 8h. Durante este período, evite ruídos que possam incomodar os vizinhos.",
+                title:
+                  data.systemTexts?.rules?.silenceTitle ||
+                  "🤫 Horário de Silêncio",
+                summary: data.rules.silenceHours,
+                details: `O horário de silêncio é ${data.rules.silenceHours.toLowerCase()}. Durante este período, evite ruídos que possam incomodar os vizinhos.`,
               },
               {
                 id: "pets",
                 icon: <Heart className="w-6 h-6 text-blue-600" />,
-                title: "🐾 Animais de Estimação",
-                summary: "Coleira, guia e recolher fezes",
-                details:
-                  "Animais de estimação devem circular sempre com coleira e guia. É obrigatório recolher sempre as fezes do seu animal.",
+                title:
+                  data.systemTexts?.rules?.petsTitle ||
+                  "🐕 Animais de Estimação",
+                summary:
+                  data.systemTexts?.rules?.petsSummary ||
+                  "Coleira, guia e recolher fezes",
+                details: data.rules.petRequirements,
               },
               {
                 id: "seguranca",
                 icon: <Shield className="w-6 h-6 text-blue-600" />,
-                title: "🛡️ Segurança",
-                summary: "Seguir orientações da portaria",
+                title:
+                  data.systemTexts?.rules?.securityTitle ||
+                  "🛡️ Segurança e Visitas",
+                summary:
+                  data.systemTexts?.rules?.securitySummary ||
+                  "Seguir orientações da portaria",
                 details:
+                  data.systemTexts?.rules?.securityDetails ||
                   "Siga sempre as orientações da portaria e avise sobre visitas. A segurança de todos depende da colaboração de cada morador.",
               },
             ].map((item, index) => (
@@ -951,28 +1015,33 @@ function AppContent() {
             <div className="flex items-center justify-center mb-4">
               <Users className="w-8 h-8 text-blue-900 mr-4" />
               <h2 className="text-3xl font-bold text-blue-900">
-                🎉 Salão de Festas e Churrasqueira
+                {data.systemTexts?.salaoFestas?.title ||
+                  "🎉 Salão de Festas e Churrasqueira"}
               </h2>
             </div>
             <p className="text-gray-600">
-              Tudo que você precisa saber para reservar e usar o salão
+              {data.systemTexts?.salaoFestas?.subtitle ||
+                "Tudo que você precisa saber para reservar e usar o salão"}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6">
-                Como Reservar
+                {data.systemTexts?.salaoFestas?.reservationTitle ||
+                  "Como Reservar"}
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <Calendar className="w-5 h-5 text-blue-600 mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-800">
-                      1. Verificar Disponibilidade
+                      {data.systemTexts?.salaoFestas?.step1Title ||
+                        "1. Verificar Disponibilidade"}
                     </h4>
                     <p className="text-sm text-gray-600">
-                      Consulte o livro da portaria ou a agenda do Drive
+                      {data.systemTexts?.salaoFestas?.step1Description ||
+                        "Consulte o livro da portaria ou a agenda do Drive"}
                     </p>
                   </div>
                 </div>
@@ -983,14 +1052,16 @@ function AppContent() {
                       2. Pagamento
                     </h4>
                     <p className="text-sm text-gray-600">
-                      Taxa: R$ 50,00 - Prazo: até 48h após solicitação
+                      Taxa: R$ {data.salaoFestas.price} - Prazo:{" "}
+                      {data.salaoFestas.paymentDeadline}
                     </p>
                     <div className="mt-2 p-3 bg-gray-50 rounded-lg text-xs">
-                      <strong>Banco do Brasil:</strong>
+                      <strong>{data.salaoFestas.bankAccount.bank}:</strong>
                       <br />
-                      Agência: 0597-5 | C/C: 39840-3
+                      Agência: {data.salaoFestas.bankAccount.agency} | C/C:{" "}
+                      {data.salaoFestas.bankAccount.account}
                       <br />
-                      <strong>Pix:</strong> 34.989.255/0001-40
+                      <strong>Pix:</strong> {data.salaoFestas.bankAccount.pix}
                     </div>
                   </div>
                 </div>
@@ -998,10 +1069,12 @@ function AppContent() {
                   <CheckCircle className="w-5 h-5 text-blue-600 mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-800">
-                      3. Confirmação
+                      {data.systemTexts?.salaoFestas?.step3Title ||
+                        "3. Confirmação"}
                     </h4>
                     <p className="text-sm text-gray-600">
-                      Envie o comprovante para o subsíndico
+                      {data.systemTexts?.salaoFestas?.step3Description ||
+                        "Envie o comprovante para o subsíndico"}
                     </p>
                   </div>
                 </div>
@@ -1011,36 +1084,49 @@ function AppContent() {
                 <button
                   onClick={() =>
                     handleWhatsAppContact(
-                      "2134896664",
-                      "Olá! Gostaria de verificar a disponibilidade do salão de festas para uma data específica."
+                      data.contacts.portaria.whatsapp,
+                      data.systemTexts?.salaoFestas?.whatsappMessage ||
+                        "Olá! Gostaria de verificar a disponibilidade do salão de festas para uma data específica."
                     )
                   }
                   className="flex items-center justify-center bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
-                  Verificar Disponibilidade
+                  {data.systemTexts?.salaoFestas?.verifyAvailabilityButton ||
+                    "Verificar Disponibilidade"}
                 </button>
                 <button
-                  onClick={() => window.open("tel:+552134896664")}
+                  onClick={() =>
+                    window.open(
+                      `tel:+55${data.contacts.portaria.phone.replace(
+                        /[^0-9]/g,
+                        ""
+                      )}`
+                    )
+                  }
                   className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Phone className="w-5 h-5 mr-2" />
-                  Ligar para Portaria
+                  {data.systemTexts?.salaoFestas?.callPortariaButton ||
+                    "Ligar para Portaria"}
                 </button>
               </div>
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6">
-                Regras de Uso
+                {data.systemTexts?.salaoFestas?.rulesTitle || "Regras de Uso"}
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <Key className="w-5 h-5 text-blue-600 mt-1" />
                   <div>
-                    <h4 className="font-semibold text-gray-800">Chaves</h4>
+                    <h4 className="font-semibold text-gray-800">
+                      {data.systemTexts?.salaoFestas?.keyRulesTitle || "Chaves"}
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      Retirar e devolver na portaria
+                      {data.systemTexts?.salaoFestas?.keyRulesDescription ||
+                        "Retirar e devolver na portaria"}
                     </p>
                   </div>
                 </div>
@@ -1048,19 +1134,28 @@ function AppContent() {
                   <Sparkles className="w-5 h-5 text-blue-600 mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-800">
-                      Entrega do Espaço
+                      {data.systemTexts?.salaoFestas?.cleaningRulesTitle ||
+                        "Entrega do Espaço"}
                     </h4>
                     <p className="text-sm text-gray-600">
-                      O espaço deve ser entregue:
+                      {data.systemTexts?.salaoFestas
+                        ?.cleaningRulesDescription ||
+                        "O espaço deve ser entregue:"}
                     </p>
                     <ul className="text-xs text-gray-600 mt-1 list-disc list-inside">
-                      <li>Limpo e organizado</li>
-                      <li>Mesas e cadeiras limpas e empilhadas</li>
-                      <li>Churrasqueira limpa</li>
-                      <li>Materiais de churrasco limpos</li>
-                      <li>Lixo ensacado e recolhido</li>
-                      <li>Banheiro higienizado</li>
-                      <li>Geladeira desligada</li>
+                      {(
+                        data.systemTexts?.salaoFestas?.cleaningRules || [
+                          "Limpo e organizado",
+                          "Mesas e cadeiras limpas e empilhadas",
+                          "Churrasqueira limpa",
+                          "Materiais de churrasco limpos",
+                          "Lixo ensacado e recolhido",
+                          "Banheiro higienizado",
+                          "Geladeira desligada",
+                        ]
+                      ).map((rule, index) => (
+                        <li key={index}>{rule}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -1068,8 +1163,8 @@ function AppContent() {
 
               <div className="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  <strong>⚠️ Importante:</strong> A falta de pagamento cancela
-                  automaticamente a reserva.
+                  {data.systemTexts?.salaoFestas?.paymentWarning ||
+                    "⚠️ Importante: A falta de pagamento cancela automaticamente a reserva."}
                 </p>
               </div>
             </div>
@@ -1084,11 +1179,12 @@ function AppContent() {
             <div className="flex items-center justify-center mb-4">
               <Phone className="w-8 h-8 text-blue-900 mr-4" />
               <h2 className="text-3xl font-bold text-blue-900">
-                📞 Contatos Úteis
+                {data.systemTexts?.contacts?.title || "📞 Contatos Úteis"}
               </h2>
             </div>
             <p className="text-gray-600">
-              Tenha sempre à mão os contatos importantes
+              {data.systemTexts?.contacts?.subtitle ||
+                "Tenha sempre à mão os contatos importantes"}
             </p>
           </div>
 
@@ -1325,6 +1421,10 @@ function AppContent() {
       <AdminPanel
         isOpen={showAdminPanel}
         onClose={() => setShowAdminPanel(false)}
+      />
+      <NewResidentForm
+        isOpen={showNewResidentForm}
+        onClose={() => setShowNewResidentForm(false)}
       />
     </div>
   );
