@@ -237,8 +237,10 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full overflow-hidden p-4 sm:p-6">
-        <DialogHeader className="pb-4">
+      <DialogContent className="max-w-4xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full flex flex-col p-0" style={{
+        overscrollBehavior: 'contain'
+      }}>
+        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-4 border-b bg-white shrink-0">
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <User className="h-5 w-5 text-blue-600" />
             {formConfig.title}
@@ -257,9 +259,9 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
           </Alert>
         )}
 
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-1 overflow-hidden px-4 sm:px-6">
           {/* Progress indicator */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-4 sm:mb-6 shrink-0">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-1">
               <span className="text-xs sm:text-sm font-medium text-gray-700">
                 Etapa {currentStep + 1} de {enabledSections.length}
@@ -282,7 +284,10 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
           </div>
 
           {/* Current step content */}
-          <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0" style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain'
+          }}>
             {enabledSections.length > 0 && (
               <Card className="border-0 shadow-none sm:border sm:shadow-sm">
                 <CardHeader className="px-0 sm:px-6 pb-4">
@@ -322,7 +327,7 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
           </div>
 
           {/* Navigation buttons */}
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center pt-4 border-t gap-3 sm:gap-0">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center pt-4 px-4 sm:px-6 pb-4 sm:pb-6 border-t bg-white gap-3 sm:gap-0 shrink-0">
             <Button
               variant="outline"
               onClick={prevStep}

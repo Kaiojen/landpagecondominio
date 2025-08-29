@@ -485,6 +485,13 @@ const saveDataWithBackup = (data) => {
 
     // Log para debug
     console.log("✅ Dados salvos com sucesso:", timestamp);
+    console.log("📊 Tamanho dos dados:", dataString.length, "caracteres");
+    
+    // Debug detalhado das chaves principais
+    if (data && typeof data === 'object') {
+      const keys = Object.keys(data);
+      console.log("🔑 Chaves principais salvas:", keys);
+    }
 
     return true;
   } catch (error) {
@@ -545,6 +552,15 @@ export const DataProvider = ({ children }) => {
 
       if (success) {
         setLastSaved(new Date().toISOString());
+        
+        // Força uma verificação adicional de sincronização
+        setTimeout(() => {
+          const verification = localStorage.getItem("panfleto_data");
+          if (!verification || JSON.parse(verification) !== updated) {
+            console.warn("🔄 Ressincronizando dados...");
+            saveDataWithBackup(updated);
+          }
+        }, 100);
       }
 
       return updated;

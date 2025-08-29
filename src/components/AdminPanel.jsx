@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useData } from "../contexts/DataContext";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "./ui/button";
@@ -50,6 +50,11 @@ export const AdminPanel = ({ isOpen, onClose }) => {
   const [isImporting, setIsImporting] = useState(false);
   const [importSuccess, setImportSuccess] = useState(false);
   const [importError, setImportError] = useState(null);
+
+  // Sincroniza formData com dados do contexto
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -111,7 +116,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
 
     try {
       await importData(file);
-      setFormData(data); // Atualiza formData com os dados importados
+      // formData será atualizado automaticamente pelo useEffect quando data mudar
       setImportSuccess(true);
       setTimeout(() => setImportSuccess(false), 3000);
     } catch (error) {
@@ -126,8 +131,8 @@ export const AdminPanel = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full overflow-hidden p-4 sm:p-6">
-        <DialogHeader className="pb-4">
+      <DialogContent className="max-w-6xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full flex flex-col p-0">
+        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-4 border-b bg-white sticky top-0 z-10">
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Settings className="h-5 w-5 text-blue-600" />
             Painel de Administração
@@ -187,8 +192,8 @@ export const AdminPanel = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 h-auto">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
+          <TabsList className="grid w-full grid-cols-7 h-auto shrink-0 mx-4 sm:mx-6 mb-0">
             <TabsTrigger
               value="building"
               className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
@@ -247,7 +252,10 @@ export const AdminPanel = ({ isOpen, onClose }) => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="max-h-[65vh] overflow-y-auto mt-4">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-4 sm:pb-6" style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain'
+          }}>
             <TabsContent value="building" className="space-y-4">
               <Card>
                 <CardHeader>
@@ -1569,6 +1577,28 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                     </h4>
                     {(() => {
                       const backupInfo = getBackupInfo();
+                      
+                      // Verifica consistência entre backups
+                      let isConsistent = true;
+                      let dataSize = 0;
+                      
+                      try {
+                        const mainData = localStorage.getItem("panfleto_data");
+                        const backupData = localStorage.getItem("panfleto_data_backup");
+                        const sessionData = sessionStorage.getItem("panfleto_data_session");
+                        
+                        if (mainData) dataSize = mainData.length;
+                        
+                        if (mainData && backupData && mainData !== backupData) {
+                          isConsistent = false;
+                        }
+                        if (mainData && sessionData && mainData !== sessionData) {
+                          isConsistent = false;
+                        }
+                      } catch (e) {
+                        isConsistent = false;
+                      }
+                      
                       return (
                         <div className="space-y-2 text-sm">
                           <div className="flex items-center justify-between">
@@ -1607,6 +1637,28 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                               {backupInfo.hasSession
                                 ? "✅ Ativo"
                                 : "❌ Inativo"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-blue-700">
+                              Dados consistentes:
+                            </span>
+                            <span
+                              className={`font-medium ${
+                                isConsistent
+                                  ? "text-green-600"
+                                  : "text-yellow-600"
+                              }`}
+                            >
+                              {isConsistent ? "✅ Sim" : "⚠️ Verificar"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-blue-700">
+                              Tamanho dos dados:
+                            </span>
+                            <span className="font-medium text-blue-900 text-xs">
+                              {Math.round(dataSize / 1024)} KB
                             </span>
                           </div>
                         </div>
