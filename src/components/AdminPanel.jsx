@@ -33,15 +33,23 @@ import {
   CheckCircle,
   AlertTriangle,
   UserPlus,
+  Download,
+  Upload,
+  FileText,
+  Clock,
 } from "lucide-react";
 
 export const AdminPanel = ({ isOpen, onClose }) => {
-  const { data, updateData, resetData } = useData();
+  const { data, updateData, resetData, exportData, importData, getBackupInfo } =
+    useData();
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("building");
   const [isSaving, setSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState(data);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importSuccess, setImportSuccess] = useState(false);
+  const [importError, setImportError] = useState(null);
 
   const handleSave = async () => {
     setSaving(true);
@@ -82,6 +90,38 @@ export const AdminPanel = ({ isOpen, onClose }) => {
       current[keys[keys.length - 1]] = value;
       return newData;
     });
+  };
+
+  const handleExport = () => {
+    try {
+      exportData();
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error("Erro ao exportar configurações:", error);
+    }
+  };
+
+  const handleImport = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    setImportError(null);
+
+    try {
+      await importData(file);
+      setFormData(data); // Atualiza formData com os dados importados
+      setImportSuccess(true);
+      setTimeout(() => setImportSuccess(false), 3000);
+    } catch (error) {
+      setImportError(error.message);
+      setTimeout(() => setImportError(null), 5000);
+    } finally {
+      setIsImporting(false);
+      // Limpa o input file
+      event.target.value = "";
+    }
   };
 
   return (
@@ -148,7 +188,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 h-auto">
+          <TabsList className="grid w-full grid-cols-7 h-auto">
             <TabsTrigger
               value="building"
               className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
@@ -188,6 +228,14 @@ export const AdminPanel = ({ isOpen, onClose }) => {
               <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Cadastro</span>
               <span className="sm:hidden">Cad.</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="backup"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+            >
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Backup</span>
+              <span className="sm:hidden">Bkp.</span>
             </TabsTrigger>
             <TabsTrigger
               value="texts"
@@ -1495,6 +1543,207 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                       campos conforme necessário.
                     </p>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Aba Backup e Configurações */}
+            <TabsContent value="backup" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-blue-600" />
+                    Backup e Sincronização
+                  </CardTitle>
+                  <CardDescription>
+                    Faça backup das suas configurações para não perdê-las ao
+                    trocar de dispositivo ou navegador.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Status do Backup */}
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      Status do Backup
+                    </h4>
+                    {(() => {
+                      const backupInfo = getBackupInfo();
+                      return (
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-blue-700">
+                              Último backup:
+                            </span>
+                            <span className="font-medium text-blue-900">
+                              {backupInfo.backupDate || "Nunca"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-blue-700">
+                              Backup local disponível:
+                            </span>
+                            <span
+                              className={`font-medium ${
+                                backupInfo.hasBackup
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {backupInfo.hasBackup ? "✅ Sim" : "❌ Não"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-blue-700">
+                              Backup da sessão:
+                            </span>
+                            <span
+                              className={`font-medium ${
+                                backupInfo.hasSession
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {backupInfo.hasSession
+                                ? "✅ Ativo"
+                                : "❌ Inativo"}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Alertas de Status */}
+                  {showSuccess && (
+                    <Alert className="border-green-500 bg-green-50">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <AlertDescription className="text-green-700">
+                        Backup exportado com sucesso! Arquivo baixado.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {importSuccess && (
+                    <Alert className="border-green-500 bg-green-50">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <AlertDescription className="text-green-700">
+                        Configurações importadas e aplicadas com sucesso!
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {importError && (
+                    <Alert className="border-red-500 bg-red-50">
+                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                      <AlertDescription className="text-red-700">
+                        Erro ao importar: {importError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Ações de Backup */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-gray-800 flex items-center gap-2">
+                        <Download className="h-4 w-4 text-green-600" />
+                        Exportar Configurações
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Baixe um arquivo JSON com todas as suas configurações
+                        para fazer backup ou transferir para outro dispositivo.
+                      </p>
+                      <Button
+                        onClick={handleExport}
+                        className="w-full bg-green-600 hover:bg-green-700"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Baixar Backup (.json)
+                      </Button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-gray-800 flex items-center gap-2">
+                        <Upload className="h-4 w-4 text-blue-600" />
+                        Importar Configurações
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Carregue um arquivo de backup para restaurar suas
+                        configurações.
+                      </p>
+                      <div className="space-y-2">
+                        <Label htmlFor="import-file" className="sr-only">
+                          Arquivo de backup
+                        </Label>
+                        <input
+                          id="import-file"
+                          type="file"
+                          accept=".json"
+                          onChange={handleImport}
+                          disabled={isImporting}
+                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                        />
+                        {isImporting && (
+                          <div className="flex items-center gap-2 text-sm text-blue-600">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                            Importando configurações...
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Instruções */}
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h4 className="font-semibold text-yellow-900 mb-3">
+                      💡 Dicas Importantes
+                    </h4>
+                    <ul className="text-sm text-yellow-800 space-y-1">
+                      <li>
+                        • <strong>Faça backup regularmente:</strong> Suas
+                        configurações são salvas apenas no navegador local.
+                      </li>
+                      <li>
+                        • <strong>Transfira entre dispositivos:</strong> Use
+                        export/import para sincronizar configurações.
+                      </li>
+                      <li>
+                        • <strong>Antes de limpar dados:</strong> Sempre exporte
+                        suas configurações antes de limpar cache/dados do
+                        navegador.
+                      </li>
+                      <li>
+                        • <strong>Compartilhe configurações:</strong> O arquivo
+                        de backup pode ser compartilhado com outros
+                        administradores.
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Informações Técnicas */}
+                  <details className="bg-gray-50 p-4 rounded-lg">
+                    <summary className="font-semibold text-gray-800 cursor-pointer">
+                      🔧 Informações Técnicas
+                    </summary>
+                    <div className="mt-3 text-sm text-gray-600 space-y-2">
+                      <p>
+                        • As configurações são salvas em 3 locais: localStorage
+                        principal, backup do localStorage e sessionStorage.
+                      </p>
+                      <p>
+                        • O sistema tenta recuperar dados automaticamente se um
+                        método falhar.
+                      </p>
+                      <p>
+                        • O arquivo de backup inclui timestamp e versão para
+                        compatibilidade futura.
+                      </p>
+                      <p>
+                        • Configurações são mescladas com valores padrão para
+                        evitar erros.
+                      </p>
+                    </div>
+                  </details>
                 </CardContent>
               </Card>
             </TabsContent>

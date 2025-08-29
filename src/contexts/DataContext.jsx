@@ -467,39 +467,195 @@ const defaultData = {
   },
 };
 
+// Função utilitária para salvar dados com múltiplos backups
+const saveDataWithBackup = (data) => {
+  try {
+    const dataString = JSON.stringify(data);
+    const timestamp = new Date().toISOString();
+
+    // Salva no localStorage principal
+    localStorage.setItem("panfleto_data", dataString);
+
+    // Salva backup com timestamp
+    localStorage.setItem("panfleto_data_backup", dataString);
+    localStorage.setItem("panfleto_data_timestamp", timestamp);
+
+    // Salva backup em sessionStorage como fallback
+    sessionStorage.setItem("panfleto_data_session", dataString);
+
+    // Log para debug
+    console.log("✅ Dados salvos com sucesso:", timestamp);
+
+    return true;
+  } catch (error) {
+    console.error("❌ Erro ao salvar dados:", error);
+    return false;
+  }
+};
+
+// Função utilitária para carregar dados com fallbacks
+const loadDataWithFallback = () => {
+  try {
+    // Tenta carregar do localStorage principal
+    let savedData = localStorage.getItem("panfleto_data");
+
+    // Se não encontrou, tenta o backup
+    if (!savedData) {
+      savedData = localStorage.getItem("panfleto_data_backup");
+      console.log("🔄 Carregando do backup localStorage");
+    }
+
+    // Se ainda não encontrou, tenta sessionStorage
+    if (!savedData) {
+      savedData = sessionStorage.getItem("panfleto_data_session");
+      console.log("🔄 Carregando do sessionStorage");
+    }
+
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      const timestamp = localStorage.getItem("panfleto_data_timestamp");
+      console.log("✅ Dados carregados de:", timestamp);
+      return parsedData;
+    }
+  } catch (error) {
+    console.error("❌ Erro ao carregar dados:", error);
+  }
+
+  return null;
+};
+
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState(defaultData);
+  const [lastSaved, setLastSaved] = useState(null);
 
   useEffect(() => {
-    // Carrega dados salvos do localStorage
-    const savedData = localStorage.getItem("panfleto_data");
+    // Carrega dados salvos com sistema de fallback
+    const savedData = loadDataWithFallback();
     if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setData({ ...defaultData, ...parsedData });
-      } catch (error) {
-        console.error("Erro ao carregar dados salvos:", error);
-      }
+      setData({ ...defaultData, ...savedData });
+      const timestamp = localStorage.getItem("panfleto_data_timestamp");
+      setLastSaved(timestamp);
     }
   }, []);
 
   const updateData = (newData) => {
     setData((prev) => {
       const updated = { ...prev, ...newData };
-      localStorage.setItem("panfleto_data", JSON.stringify(updated));
+      const success = saveDataWithBackup(updated);
+
+      if (success) {
+        setLastSaved(new Date().toISOString());
+      }
+
       return updated;
     });
   };
 
   const resetData = () => {
+    const success = saveDataWithBackup(defaultData);
     setData(defaultData);
-    localStorage.setItem("panfleto_data", JSON.stringify(defaultData));
+
+    if (success) {
+      setLastSaved(new Date().toISOString());
+    }
+  };
+
+  const exportData = () => {
+    try {
+      const exportData = {
+        data: data,
+        timestamp: new Date().toISOString(),
+        version: "1.0",
+      };
+
+      const dataString = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([dataString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `configuracoes-condominio-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log("✅ Configurações exportadas com sucesso");
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao exportar configurações:", error);
+      return false;
+    }
+  };
+
+  const importData = (file) => {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        reject(new Error("Nenhum arquivo selecionado"));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const importedData = JSON.parse(e.target.result);
+
+          // Valida a estrutura dos dados
+          if (importedData.data && typeof importedData.data === "object") {
+            const mergedData = { ...defaultData, ...importedData.data };
+            const success = saveDataWithBackup(mergedData);
+
+            if (success) {
+              setData(mergedData);
+              setLastSaved(new Date().toISOString());
+              console.log("✅ Configurações importadas com sucesso");
+              resolve(true);
+            } else {
+              reject(new Error("Erro ao salvar dados importados"));
+            }
+          } else {
+            reject(new Error("Formato de arquivo inválido"));
+          }
+        } catch (error) {
+          console.error("❌ Erro ao importar configurações:", error);
+          reject(error);
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error("Erro ao ler o arquivo"));
+      };
+
+      reader.readAsText(file);
+    });
+  };
+
+  const getBackupInfo = () => {
+    const timestamp = localStorage.getItem("panfleto_data_timestamp");
+    const hasBackup = !!localStorage.getItem("panfleto_data_backup");
+    const hasSession = !!sessionStorage.getItem("panfleto_data_session");
+
+    return {
+      lastSaved,
+      timestamp,
+      hasBackup,
+      hasSession,
+      backupDate: timestamp
+        ? new Date(timestamp).toLocaleString("pt-BR")
+        : null,
+    };
   };
 
   const value = {
     data,
     updateData,
     resetData,
+    exportData,
+    importData,
+    getBackupInfo,
+    lastSaved,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
