@@ -9,6 +9,7 @@ import { DataProvider, useData } from "./contexts/DataContext";
 import { LoginModal } from "./components/LoginModal";
 import { AdminPanel } from "./components/AdminPanel";
 import { NewResidentForm } from "./components/NewResidentForm";
+
 import {
   Home,
   Users,
@@ -390,7 +391,7 @@ function AppContent() {
                           Limpo e organizado. Mesas e cadeiras limpas e
                           empilhadas. Churrasqueira limpa. Materiais de
                           churrasco limpos. Lixo ensacado e recolhido. Banheiro
-                          higienizado. Geladeira desligada.
+                          higienizado. Geladeira ligada.
                         </p>
                       </div>
                     </div>
@@ -1151,7 +1152,7 @@ function AppContent() {
                           "Materiais de churrasco limpos",
                           "Lixo ensacado e recolhido",
                           "Banheiro higienizado",
-                          "Geladeira desligada",
+                          "Geladeira ligada",
                         ]
                       ).map((rule, index) => (
                         <li key={index}>{rule}</li>
@@ -1188,125 +1189,313 @@ function AppContent() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 text-center border-2 border-blue-200 relative">
-              <div className="absolute top-4 right-4 flex items-center">
-                <Wifi className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-xs text-green-600 font-semibold">
-                  24h Online
-                </span>
+          {/* Contatos organizados - Centralizados */}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full">
+              {/* Portaria */}
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-5 text-center border-2 border-blue-200 relative shadow-lg">
+                <div className="absolute top-3 right-3 flex items-center">
+                  <Wifi className="w-4 h-4 text-green-500 mr-1" />
+                  <span className="text-xs text-green-600 font-semibold">
+                    24h Online
+                  </span>
+                </div>
+                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Home className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  🏢 Portaria
+                </h3>
+                <p className="text-blue-800 font-bold mb-2 text-lg">
+                  {data.contacts.portaria.phone}
+                </p>
+                <div className="flex items-center justify-center mb-6">
+                  <Timer className="w-4 h-4 text-gray-600 mr-2" />
+                  <span className="text-sm text-gray-600 font-medium">
+                    24 horas por dia
+                  </span>
+                </div>
+                <div className="flex flex-col space-y-3">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `tel:+55${data.contacts.portaria.phone.replace(
+                          /[^0-9]/g,
+                          ""
+                        )}`
+                      )
+                    }
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
+                  >
+                    📞 Ligar para Portaria
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleWhatsAppContact(
+                        data.contacts.portaria.whatsapp,
+                        data.systemTexts?.contacts?.moradorWhatsappMessage ||
+                          "Olá! Sou morador do Edifício Marechal Castelo Branco."
+                      )
+                    }
+                    className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
+                  >
+                    💬 WhatsApp Portaria
+                  </button>
+                </div>
               </div>
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Home className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">🏢 Portaria</h3>
-              <p className="text-gray-700 font-semibold mb-2">(21) 3489-6664</p>
-              <div className="flex items-center justify-center mb-4">
-                <Timer className="w-4 h-4 text-gray-600 mr-1" />
-                <span className="text-sm text-gray-600">24 horas por dia</span>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <button
-                  onClick={() => window.open("tel:+552134896664")}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  📞 Ligar Agora
-                </button>
-                <button
-                  onClick={() =>
-                    handleWhatsAppContact(
-                      "2134896664",
-                      "Olá! Sou morador do Edifício Marechal Castelo Branco."
-                    )
-                  }
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  💬 WhatsApp
-                </button>
+
+              {/* Card da Administradora */}
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-5 text-center border-2 border-gray-200 relative shadow-lg">
+                <div className="absolute top-4 right-4 flex items-center">
+                  <Timer className="w-4 h-4 text-orange-500 mr-1" />
+                  <span className="text-xs text-orange-600 font-semibold">
+                    Horário Comercial
+                  </span>
+                </div>
+                <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
+                  🏢 Administradora
+                </h3>
+                <div className="text-gray-700 mb-4 space-y-0.5">
+                  <p className="font-semibold text-sm">
+                    {data.contacts.administradora.name}
+                  </p>
+                  <p className="font-semibold">
+                    Tel.: {data.contacts.administradora.phone}
+                  </p>
+                  <p className="text-xs">
+                    {data.contacts.administradora.email}
+                  </p>
+                </div>
+                <div className="flex items-center justify-center mb-4">
+                  <Timer className="w-4 h-4 text-gray-600 mr-1" />
+                  <span className="text-xs text-gray-600 font-medium">
+                    Seg-Sex, 8h-17h
+                  </span>
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `tel:+55${data.contacts.administradora.phone.replace(
+                          /[^0-9]/g,
+                          ""
+                        )}`
+                      )
+                    }
+                    className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 font-semibold text-sm"
+                  >
+                    📞 Ligar
+                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        handleWhatsAppContact(
+                          data.contacts.administradora.whatsapp,
+                          "Olá! Sou morador do Edifício Marechal Castelo Branco e preciso de suporte."
+                        )
+                      }
+                      className="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 font-semibold text-sm flex-1"
+                    >
+                      💬 WhatsApp
+                    </button>
+                    <button
+                      onClick={() =>
+                        window.open(
+                          `mailto:${data.contacts.administradora.email}`
+                        )
+                      }
+                      className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 font-semibold text-sm flex-1"
+                    >
+                      ✉️ E-mail
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 relative">
-              <div className="absolute top-4 right-4 flex items-center">
-                <Timer className="w-4 h-4 text-orange-500 mr-1" />
-                <span className="text-xs text-orange-600 font-semibold">
-                  Horário Comercial
-                </span>
-              </div>
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-gray-800 mb-2">
-                🏢 Administradora Estasa
+          {/* Administração do Condomínio */}
+          <div className="mt-16">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                🏛️ Administração do Condomínio
               </h3>
-              <div className="text-sm text-gray-600 mb-2">
-                <p className="font-medium">Tel.: (21) 2323-4423</p>
-                <p className="font-medium">WhatsApp: (21) 99584-4449</p>
-                <p>atendimento.locacao@estasa.com.br</p>
-              </div>
-              <div className="flex items-center justify-center mb-4">
-                <Timer className="w-4 h-4 text-gray-600 mr-1" />
-                <span className="text-sm text-gray-600">
-                  Segunda à Sexta, 8h-17h
-                </span>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <button
-                  onClick={() => window.open("tel:+552123234423")}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  📞 Ligar
-                </button>
-                <button
-                  onClick={() =>
-                    handleWhatsAppContact(
-                      "21995844449",
-                      "Olá! Sou morador do Edifício Marechal Castelo Branco e preciso de suporte."
-                    )
-                  }
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  💬 WhatsApp
-                </button>
-                <button
-                  onClick={() =>
-                    window.open("mailto:atendimento.locacao@estasa.com.br")
-                  }
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  ✉️ E-mail
-                </button>
-              </div>
+              <p className="text-gray-600">
+                Para questões administrativas, assembleias e decisões do
+                condomínio
+              </p>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-6 text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-blue-600" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
+              {/* Card do Síndico */}
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-5 text-center border-2 border-purple-200 relative shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="absolute top-4 right-4 flex items-center">
+                  <Timer className="w-4 h-4 text-purple-500 mr-1" />
+                  <span className="text-xs text-purple-600 font-semibold">
+                    Comercial
+                  </span>
+                </div>
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-xl">
+                  <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+                </div>
+                <h4 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">
+                  👔 Síndico
+                </h4>
+                <p className="text-purple-800 font-bold mb-1 sm:mb-2 text-lg sm:text-xl">
+                  {data.contacts.sindico.name}
+                </p>
+                <p className="text-gray-700 font-semibold mb-4 sm:mb-6 text-base sm:text-lg">
+                  {data.contacts.sindico.phone}
+                </p>
+                <div className="flex items-center justify-center mb-8">
+                  <Timer className="w-5 h-5 text-gray-600 mr-2" />
+                  <span className="text-gray-600 font-medium">
+                    {data.contacts.sindico.availability}
+                  </span>
+                </div>
+                <div className="flex flex-col space-y-4">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `tel:+55${data.contacts.sindico.phone.replace(
+                          /[^0-9]/g,
+                          ""
+                        )}`
+                      )
+                    }
+                    className="bg-purple-600 text-white px-8 py-4 rounded-xl hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-lg"
+                  >
+                    📞 Ligar para Síndico
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleWhatsAppContact(
+                        data.contacts.sindico.whatsapp,
+                        "Olá! Sou morador do Edifício Marechal Castelo Branco e preciso falar com o síndico sobre questões do condomínio."
+                      )
+                    }
+                    className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-lg"
+                  >
+                    💬 WhatsApp Síndico
+                  </button>
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2">TCL/TLP</h3>
-              <div className="text-sm text-gray-600 mb-4">
-                <p>Cap Mantovani – Fiscal Administrativo</p>
-                <p>Tel.: (91) 98406-3859</p>
-                <p>RITEx: 800-7303</p>
+
+              {/* Card do Subsíndico */}
+              <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg p-5 text-center border-2 border-teal-200 relative shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="absolute top-4 right-4 flex items-center">
+                  <Timer className="w-4 h-4 text-teal-500 mr-1" />
+                  <span className="text-xs text-teal-600 font-semibold">
+                    Fins de Semana
+                  </span>
+                </div>
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-xl">
+                  <Users className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+                </div>
+                <h4 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">
+                  👨‍💼 Subsíndico
+                </h4>
+                <p className="text-teal-800 font-bold mb-1 sm:mb-2 text-lg sm:text-xl">
+                  {data.contacts.subsindico.name}
+                </p>
+                <p className="text-gray-700 font-semibold mb-4 sm:mb-6 text-base sm:text-lg">
+                  {data.contacts.subsindico.phone}
+                </p>
+                <div className="flex items-center justify-center mb-8">
+                  <Timer className="w-5 h-5 text-gray-600 mr-2" />
+                  <span className="text-gray-600 font-medium">
+                    {data.contacts.subsindico.availability}
+                  </span>
+                </div>
+                <div className="flex flex-col space-y-4">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `tel:+55${data.contacts.subsindico.phone.replace(
+                          /[^0-9]/g,
+                          ""
+                        )}`
+                      )
+                    }
+                    className="bg-teal-600 text-white px-8 py-4 rounded-xl hover:bg-teal-700 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-lg"
+                  >
+                    📞 Ligar para Subsíndico
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleWhatsAppContact(
+                        data.contacts.subsindico.whatsapp,
+                        "Olá! Sou morador do Edifício Marechal Castelo Branco e preciso falar com o subsíndico."
+                      )
+                    }
+                    className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-lg"
+                  >
+                    💬 WhatsApp Subsíndico
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-col space-y-2">
-                <button
-                  onClick={() => window.open("tel:+5591984063859")}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Ligar
-                </button>
-                <button
-                  onClick={() =>
-                    handleWhatsAppContact(
-                      "91984063859",
-                      "Olá Cap Mantovani! Preciso de informações sobre TCL/TLP para meu apartamento no Edifício Marechal Castelo Branco."
-                    )
-                  }
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  WhatsApp
-                </button>
+            </div>
+          </div>
+
+          {/* Outros Contatos */}
+          <div className="mt-10">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                💰 Outros Serviços
+              </h3>
+              <p className="text-gray-600 text-sm">Suporte especializado</p>
+            </div>
+
+            <div className="max-w-xs mx-auto">
+              {/* Card TCL/TLP - Centralizado */}
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-5 text-center border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <DollarSign className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-800 mb-2">
+                  💰 TCL/TLP
+                </h4>
+                <div className="text-gray-700 mb-8 space-y-1">
+                  <p className="font-bold text-xl text-orange-800 mb-2">
+                    {data.contacts.tcl.name}
+                  </p>
+                  <p className="font-semibold text-lg">
+                    Tel.: {data.contacts.tcl.phone}
+                  </p>
+                  <p className="text-sm font-medium">
+                    RITEx: {data.contacts.tcl.ritex}
+                  </p>
+                </div>
+                <div className="flex flex-col space-y-4">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `tel:+55${data.contacts.tcl.phone.replace(
+                          /[^0-9]/g,
+                          ""
+                        )}`
+                      )
+                    }
+                    className="bg-orange-600 text-white px-8 py-4 rounded-xl hover:bg-orange-700 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-lg"
+                  >
+                    📞 Ligar para TCL
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleWhatsAppContact(
+                        data.contacts.tcl.whatsapp,
+                        data.systemTexts?.rules?.tclWhatsappMessage ||
+                          "Olá Cap Mantovani! Preciso de informações sobre TCL/TLP para meu apartamento no Edifício Marechal Castelo Branco."
+                      )
+                    }
+                    className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-lg"
+                  >
+                    💬 WhatsApp TCL
+                  </button>
+                </div>
               </div>
             </div>
           </div>

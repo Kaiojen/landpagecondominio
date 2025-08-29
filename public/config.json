@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-01-28T17:10:00.000Z",
+  "building": {
+    "name": "Edifício Marechal Castelo Branco",
+    "address": "Rua Felipe de Oliveira, 18 – Copacabana – Rio de Janeiro – CEP 22011-030",
+    "welcomeMessage": "É com grande alegria que a administração e os demais condôminos dão as boas-vindas a você e sua família. Estamos felizes por tê-los conosco na Rua Felipe de Oliveira, 18 – Copacabana – Rio de Janeiro – CEP 22011-030. Esperamos que se sintam em casa! Para garantir a boa convivência e a segurança de todos, preparamos este guia rápido com informações importantes.",
+    "footerMessage": "A convivência é a chave para um lar feliz!"
+  },
+  "contacts": {
+    "portaria": {
+      "name": "Portaria",
+      "phone": "(21) 3489-6664",
+      "whatsapp": "2134896664",
+      "availability": "24 horas por dia"
+    },
+    "administradora": {
+      "name": "Administradora Estasa",
+      "phone": "(21) 2323-4423",
+      "whatsapp": "21995844449",
+      "email": "atendimento.locacao@estasa.com.br",
+      "availability": "Segunda à Sexta, 8h-17h"
+    },
+    "tcl": {
+      "name": "Cap Mantovani – Fiscal Administrativo",
+      "phone": "(91) 98406-3859",
+      "whatsapp": "91984063859",
+      "ritex": "800-7303"
+    },
+    "sindico": {
+      "name": "Síndico do Condomínio",
+      "phone": "(21) 99999-9999",
+      "whatsapp": "21999999999",
+      "availability": "Segunda à Sexta, 8h-18h"
+    },
+    "subsindico": {
+      "name": "Subsíndico do Condomínio",
+      "phone": "(21) 88888-8888",
+      "whatsapp": "21888888888",
+      "availability": "Fins de semana e feriados"
+    }
+  },
+  "salaoFestas": {
+    "price": "50,00",
+    "paymentDeadline": "48h após solicitação",
+    "bankAccount": {
+      "bank": "Banco do Brasil",
+      "agency": "0597-5",
+      "account": "39840-3",
+      "pix": "34.989.255/0001-40"
+    }
+  },
+  "rules": {
+    "silenceHours": "Das 22h às 8h",
+    "petRequirements": "Devem circular com coleira e guia. Recolher sempre as fezes.",
+    "trashRules": "Todo lixo deve ser ensacado. O orgânico, além de ensacado, deve ser colocado no duto de lixo.",
+    "movingRules": "Devem ser agendadas com o síndico e seguir as normas municipais.",
+    "parkingRules": "Distribuídas por antiguidade dos militares.",
+    "securityRules": "Siga as orientações da portaria e avise sobre visitas."
+  },
+  "systemTexts": {
+    "salaoFestas": {
+      "title": "🎉 Salão de Festas e Churrasqueira",
+      "subtitle": "Tudo que você precisa saber para reservar e usar o salão",
+      "reservationTitle": "Como Reservar",
+      "rulesTitle": "Regras de Uso",
+      "step1Title": "1. Verificar Disponibilidade",
+      "step1Description": "Consulte o livro da portaria ou a agenda do Drive",
+      "step2Title": "2. Pagamento",
+      "step2Description": "Taxa: R$ {price} - Prazo: {paymentDeadline}",
+      "step3Title": "3. Confirmação",
+      "step3Description": "Envie o comprovante para o subsíndico",
+      "keyRulesTitle": "Chaves",
+      "keyRulesDescription": "Retirar e devolver na portaria",
+      "cleaningRulesTitle": "Entrega do Espaço",
+      "cleaningRulesDescription": "O espaço deve ser entregue:",
+      "cleaningRules": [
+        "Limpo e organizado",
+        "Mesas e cadeiras limpas e empilhadas",
+        "Churrasqueira limpa",
+        "Materiais de churrasco limpos",
+        "Lixo ensacado e recolhido",
+        "Banheiro higienizado",
+        "Geladeira ligada"
+      ],
+      "paymentWarning": "⚠️ Importante: A falta de pagamento cancela automaticamente a reserva.",
+      "verifyAvailabilityButton": "Verificar Disponibilidade",
+      "callPortariaButton": "Ligar para Portaria",
+      "whatsappMessage": "Olá! Gostaria de verificar a disponibilidade do salão de festas para uma data específica."
+    },
+    "contacts": {
+      "title": "📞 Contatos Úteis",
+      "subtitle": "Tenha sempre à mão os contatos importantes",
+      "portariaTitle": "🏢 Portaria",
+      "callNowButton": "📞 Ligar Agora",
+      "whatsappButton": "💬 WhatsApp",
+      "emailButton": "✉️ E-mail",
+      "onlineStatus": "24h Online",
+      "businessHours": "Horário Comercial",
+      "moradorWhatsappMessage": "Olá! Sou morador do Edifício Marechal Castelo Branco."
+    },
+    "hero": {
+      "viewRulesButton": "Ver Regras Importantes",
+      "talkToPortariaButton": "Falar com Portaria"
+    },
+    "welcome": {
+      "title": "Mensagem de Boas-Vindas"
+    },
+    "rules": {
+      "title": "📋 Regras Importantes",
+      "subtitle": "Orientações essenciais para uma boa convivência",
+      "viewingText": "Visualizando 1 de {total} regras",
+      "totalRulesText": "{total} regras importantes",
+      "silenceTitle": "🤫 Horário de Silêncio",
+      "petsTitle": "🐕 Animais de Estimação",
+      "trashTitle": "🗑️ Descarte de Lixo",
+      "movingTitle": "📦 Mudanças",
+      "parkingTitle": "🚗 Vagas de Estacionamento",
+      "securityTitle": "🛡️ Segurança e Visitas",
+      "tclTitle": "💰 Taxa de Limpeza Pública (TCL/TLP)",
+      "tclSummary": "Responsabilidade do ocupante conforme Portaria C Ex nº 1846/2022",
+      "parkingSummary": "Distribuição por antiguidade dos militares",
+      "movingSummary": "Agendamento obrigatório com síndico",
+      "trashSummary": "Ensacar todo lixo, orgânico no duto",
+      "petsSummary": "Coleira, guia e recolher fezes",
+      "securitySummary": "Seguir orientações da portaria",
+      "tclDetails": "Conforme Portaria C Ex nº 1846/2022, o permissionário (ocupante) é responsável pelo pagamento da Taxa de Coleta de Lixo (TCL) e da Taxa de Limpeza Pública (TLP). A TLP é um tributo municipal destinado a remunerar os serviços de coleta e destinação de resíduos sólidos. O pagamento deve ser feito usando o número de inscrição do seu imóvel.",
+      "parkingDetails": "As vagas de estacionamento são distribuídas por antiguidade dos militares. Respeite sempre a vaga designada e não estacione em locais não autorizados.",
+      "securityDetails": "Siga sempre as orientações da portaria e avise sobre visitas. A segurança de todos depende da colaboração de cada morador.",
+      "tclWhatsappMessage": "Olá Cap Mantovani! Preciso de informações sobre TCL/TLP para meu apartamento no Edifício Marechal Castelo Branco.",
+      "movingWhatsappMessage": "Olá! Preciso agendar uma mudança no Edifício Marechal Castelo Branco."
+    }
+  },
+  "newResidentForm": {
+    "enabled": true,
+    "title": "Cadastro de Novo Morador",
+    "subtitle": "Preencha as informações abaixo para se registrar como novo morador",
+    "sendTo": {
+      "whatsapp": "21986505733",
+      "adminEmail": "admin@edificio.com.br",
+      "preferredMethod": "whatsapp"
+    }
+  }
+}

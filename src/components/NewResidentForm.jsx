@@ -48,8 +48,8 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const formConfig = data.newResidentForm;
-  const enabledSections = Object.entries(formConfig.fields).filter(
+  const formConfig = data.newResidentForm || {};
+  const enabledSections = Object.entries(formConfig.fields || {}).filter(
     ([, section]) => section.enabled
   );
 
@@ -231,15 +231,18 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
     return icons[sectionKey] || <FileText className="w-5 h-5" />;
   };
 
-  if (!formConfig.enabled) {
+  if (!formConfig.enabled || !formConfig.fields) {
     return null;
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full flex flex-col p-0" style={{
-        overscrollBehavior: 'contain'
-      }}>
+      <DialogContent
+        className="max-w-4xl max-h-[95vh] sm:max-h-[90vh] w-[95vw] sm:w-full flex flex-col p-0"
+        style={{
+          overscrollBehavior: "contain",
+        }}
+      >
         <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-4 border-b bg-white shrink-0">
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <User className="h-5 w-5 text-blue-600" />
@@ -284,10 +287,13 @@ export const NewResidentForm = ({ isOpen, onClose }) => {
           </div>
 
           {/* Current step content */}
-          <div className="flex-1 overflow-y-auto min-h-0" style={{
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain'
-          }}>
+          <div
+            className="flex-1 overflow-y-auto min-h-0"
+            style={{
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+            }}
+          >
             {enabledSections.length > 0 && (
               <Card className="border-0 shadow-none sm:border sm:shadow-sm">
                 <CardHeader className="px-0 sm:px-6 pb-4">

@@ -40,8 +40,15 @@ import {
 } from "lucide-react";
 
 export const AdminPanel = ({ isOpen, onClose }) => {
-  const { data, updateData, resetData, exportData, importData, getBackupInfo } =
-    useData();
+  const {
+    data,
+    updateData,
+    resetData,
+    exportData,
+    exportForDeploy,
+    importData,
+    getBackupInfo,
+  } = useData();
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("building");
   const [isSaving, setSaving] = useState(false);
@@ -104,6 +111,16 @@ export const AdminPanel = ({ isOpen, onClose }) => {
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error("Erro ao exportar configurações:", error);
+    }
+  };
+
+  const handleExportForDeploy = () => {
+    try {
+      exportForDeploy();
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error("Erro ao exportar para deploy:", error);
     }
   };
 
@@ -192,71 +209,91 @@ export const AdminPanel = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-          <TabsList className="grid w-full grid-cols-7 h-auto shrink-0 mx-4 sm:mx-6 mb-0">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="flex-1 flex flex-col overflow-hidden"
+        >
+          <TabsList className="grid w-full grid-cols-7 h-auto shrink-0 mx-4 sm:mx-6 mb-2 bg-gray-50 p-1">
+            {/* 1. Informações Básicas */}
             <TabsTrigger
               value="building"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+              <Home className="h-4 w-4 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Edifício</span>
-              <span className="sm:hidden">Ed.</span>
+              <span className="sm:hidden text-[10px]">Ed.</span>
             </TabsTrigger>
+
+            {/* 2. Contatos */}
             <TabsTrigger
               value="contacts"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
+              <Phone className="h-4 w-4 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Contatos</span>
-              <span className="sm:hidden">Tel.</span>
+              <span className="sm:hidden text-[10px]">Tel.</span>
             </TabsTrigger>
-            <TabsTrigger
-              value="salao"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
-            >
-              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:block">Salão</span>
-              <span className="sm:hidden">Sal.</span>
-            </TabsTrigger>
+
+            {/* 3. Regras */}
             <TabsTrigger
               value="rules"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
+              <Shield className="h-4 w-4 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Regras</span>
-              <span className="sm:hidden">Reg.</span>
+              <span className="sm:hidden text-[10px]">Reg.</span>
             </TabsTrigger>
+
+            {/* 4. Salão de Festas */}
+            <TabsTrigger
+              value="salao"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              <Users className="h-4 w-4 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Salão</span>
+              <span className="sm:hidden text-[10px]">Sal.</span>
+            </TabsTrigger>
+
+            {/* 5. Cadastro de Moradores */}
             <TabsTrigger
               value="newresident"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" />
+              <UserPlus className="h-4 w-4 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Cadastro</span>
-              <span className="sm:hidden">Cad.</span>
+              <span className="sm:hidden text-[10px]">Cad.</span>
             </TabsTrigger>
-            <TabsTrigger
-              value="backup"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
-            >
-              <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:block">Backup</span>
-              <span className="sm:hidden">Bkp.</span>
-            </TabsTrigger>
+
+            {/* 6. Textos Personalizados */}
             <TabsTrigger
               value="texts"
-              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+              <Settings className="h-4 w-4 sm:h-4 sm:w-4" />
               <span className="hidden sm:block">Textos</span>
-              <span className="sm:hidden">Txt.</span>
+              <span className="sm:hidden text-[10px]">Txt.</span>
+            </TabsTrigger>
+
+            {/* 7. Backup e Configurações */}
+            <TabsTrigger
+              value="backup"
+              className="gap-1 text-xs flex-col sm:flex-row sm:gap-2 sm:text-sm p-2 sm:p-3 min-h-[60px] sm:min-h-[50px] data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
+              <FileText className="h-4 w-4 sm:h-4 sm:w-4" />
+              <span className="hidden sm:block">Backup</span>
+              <span className="sm:hidden text-[10px]">Bkp.</span>
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-4 sm:pb-6" style={{
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain'
-          }}>
-            <TabsContent value="building" className="space-y-4">
+          <div
+            className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6"
+            style={{
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+            }}
+          >
+            <TabsContent value="building" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle>Informações do Edifício</CardTitle>
@@ -315,7 +352,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="contacts" className="space-y-4">
+            <TabsContent value="contacts" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle>Contatos do Condomínio</CardTitle>
@@ -407,6 +444,122 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                   </div>
 
                   <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Síndico</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Nome do Síndico</Label>
+                        <Input
+                          value={formData.contacts.sindico.name}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.sindico.name",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex: João Silva"
+                        />
+                      </div>
+                      <div>
+                        <Label>Telefone</Label>
+                        <Input
+                          value={formData.contacts.sindico.phone}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.sindico.phone",
+                              e.target.value
+                            )
+                          }
+                          placeholder="(21) 99999-9999"
+                        />
+                      </div>
+                      <div>
+                        <Label>WhatsApp (apenas números)</Label>
+                        <Input
+                          value={formData.contacts.sindico.whatsapp}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.sindico.whatsapp",
+                              e.target.value
+                            )
+                          }
+                          placeholder="21999999999"
+                        />
+                      </div>
+                      <div>
+                        <Label>Disponibilidade</Label>
+                        <Input
+                          value={formData.contacts.sindico.availability}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.sindico.availability",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Segunda à Sexta, 8h-18h"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Subsíndico</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Nome do Subsíndico</Label>
+                        <Input
+                          value={formData.contacts.subsindico.name}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.subsindico.name",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex: Maria Santos"
+                        />
+                      </div>
+                      <div>
+                        <Label>Telefone</Label>
+                        <Input
+                          value={formData.contacts.subsindico.phone}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.subsindico.phone",
+                              e.target.value
+                            )
+                          }
+                          placeholder="(21) 88888-8888"
+                        />
+                      </div>
+                      <div>
+                        <Label>WhatsApp (apenas números)</Label>
+                        <Input
+                          value={formData.contacts.subsindico.whatsapp}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.subsindico.whatsapp",
+                              e.target.value
+                            )
+                          }
+                          placeholder="21888888888"
+                        />
+                      </div>
+                      <div>
+                        <Label>Disponibilidade</Label>
+                        <Input
+                          value={formData.contacts.subsindico.availability}
+                          onChange={(e) =>
+                            updateFormData(
+                              "contacts.subsindico.availability",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Fins de semana e feriados"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
                     <h4 className="font-medium text-sm">TCL/TLP</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -454,7 +607,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="salao" className="space-y-4">
+            <TabsContent value="salao" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle>Salão de Festas</CardTitle>
@@ -545,7 +698,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="rules" className="space-y-4">
+            <TabsContent value="rules" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle>Regras do Condomínio</CardTitle>
@@ -617,7 +770,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="texts" className="space-y-4">
+            <TabsContent value="texts" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle>Textos do Sistema - Salão de Festas</CardTitle>
@@ -1286,7 +1439,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
             </TabsContent>
 
             {/* Aba Cadastro de Novos Moradores */}
-            <TabsContent value="newresident" className="space-y-4">
+            <TabsContent value="newresident" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle>
@@ -1556,7 +1709,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
             </TabsContent>
 
             {/* Aba Backup e Configurações */}
-            <TabsContent value="backup" className="space-y-4">
+            <TabsContent value="backup" className="space-y-6 mt-0">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -1577,28 +1730,36 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                     </h4>
                     {(() => {
                       const backupInfo = getBackupInfo();
-                      
+
                       // Verifica consistência entre backups
                       let isConsistent = true;
                       let dataSize = 0;
-                      
+
                       try {
                         const mainData = localStorage.getItem("panfleto_data");
-                        const backupData = localStorage.getItem("panfleto_data_backup");
-                        const sessionData = sessionStorage.getItem("panfleto_data_session");
-                        
+                        const backupData = localStorage.getItem(
+                          "panfleto_data_backup"
+                        );
+                        const sessionData = sessionStorage.getItem(
+                          "panfleto_data_session"
+                        );
+
                         if (mainData) dataSize = mainData.length;
-                        
+
                         if (mainData && backupData && mainData !== backupData) {
                           isConsistent = false;
                         }
-                        if (mainData && sessionData && mainData !== sessionData) {
+                        if (
+                          mainData &&
+                          sessionData &&
+                          mainData !== sessionData
+                        ) {
                           isConsistent = false;
                         }
                       } catch (e) {
                         isConsistent = false;
                       }
-                      
+
                       return (
                         <div className="space-y-2 text-sm">
                           <div className="flex items-center justify-between">
@@ -1695,33 +1856,52 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                   )}
 
                   {/* Ações de Backup */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-4">
                       <h4 className="font-semibold text-gray-800 flex items-center gap-2">
                         <Download className="h-4 w-4 text-green-600" />
-                        Exportar Configurações
+                        Backup Local
                       </h4>
                       <p className="text-sm text-gray-600">
-                        Baixe um arquivo JSON com todas as suas configurações
-                        para fazer backup ou transferir para outro dispositivo.
+                        Baixe suas configurações para backup pessoal.
                       </p>
                       <Button
                         onClick={handleExport}
                         className="w-full bg-green-600 hover:bg-green-700"
+                        size="sm"
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        Baixar Backup (.json)
+                        Backup
+                      </Button>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-gray-800 flex items-center gap-2">
+                        <Upload className="h-4 w-4 text-purple-600" />
+                        🚀 Publicar Mudanças
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Gere config.json para que{" "}
+                        <strong>todos os usuários</strong> vejam suas
+                        alterações.
+                      </p>
+                      <Button
+                        onClick={handleExportForDeploy}
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        size="sm"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Publicar
                       </Button>
                     </div>
 
                     <div className="space-y-4">
                       <h4 className="font-semibold text-gray-800 flex items-center gap-2">
                         <Upload className="h-4 w-4 text-blue-600" />
-                        Importar Configurações
+                        Importar
                       </h4>
                       <p className="text-sm text-gray-600">
-                        Carregue um arquivo de backup para restaurar suas
-                        configurações.
+                        Carregue um backup para restaurar.
                       </p>
                       <div className="space-y-2">
                         <Label htmlFor="import-file" className="sr-only">
@@ -1733,41 +1913,66 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                           accept=".json"
                           onChange={handleImport}
                           disabled={isImporting}
-                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                          className="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
                         />
                         {isImporting && (
-                          <div className="flex items-center gap-2 text-sm text-blue-600">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-                            Importando configurações...
+                          <div className="flex items-center gap-2 text-xs text-blue-600">
+                            <div className="h-3 w-3 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                            Importando...
                           </div>
                         )}
                       </div>
                     </div>
                   </div>
 
+                  {/* Instruções Importantes */}
+                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <h4 className="font-semibold text-purple-900 mb-3">
+                      🚀 Como Publicar Suas Alterações
+                    </h4>
+                    <div className="text-sm text-purple-800 space-y-2">
+                      <p>
+                        <strong>1. Faça as alterações</strong> no painel admin
+                      </p>
+                      <p>
+                        <strong>2. Clique em "Publicar Mudanças"</strong> para
+                        baixar config.json
+                      </p>
+                      <p>
+                        <strong>3. Substitua o arquivo</strong> config.json na
+                        pasta <code>public/</code>
+                      </p>
+                      <p>
+                        <strong>4. Faça deploy</strong> da aplicação
+                      </p>
+                      <p className="mt-3 p-2 bg-purple-100 rounded">
+                        ✨ <strong>Resultado:</strong> Todos os usuários verão
+                        suas alterações!
+                      </p>
+                    </div>
+                  </div>
+
                   {/* Instruções */}
                   <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                     <h4 className="font-semibold text-yellow-900 mb-3">
-                      💡 Dicas Importantes
+                      💡 Sistema Inteligente
                     </h4>
                     <ul className="text-sm text-yellow-800 space-y-1">
                       <li>
-                        • <strong>Faça backup regularmente:</strong> Suas
-                        configurações são salvas apenas no navegador local.
+                        • <strong>Prioridade 1:</strong> Arquivo config.json
+                        (configurações globais)
                       </li>
                       <li>
-                        • <strong>Transfira entre dispositivos:</strong> Use
-                        export/import para sincronizar configurações.
+                        • <strong>Prioridade 2:</strong> Configurações locais
+                        (localStorage)
                       </li>
                       <li>
-                        • <strong>Antes de limpar dados:</strong> Sempre exporte
-                        suas configurações antes de limpar cache/dados do
-                        navegador.
+                        • <strong>Prioridade 3:</strong> Configurações padrão do
+                        sistema
                       </li>
                       <li>
-                        • <strong>Compartilhe configurações:</strong> O arquivo
-                        de backup pode ser compartilhado com outros
-                        administradores.
+                        • <strong>Backup pessoal:</strong> Para transferir entre
+                        dispositivos
                       </li>
                     </ul>
                   </div>

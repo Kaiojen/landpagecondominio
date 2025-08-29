@@ -39,6 +39,18 @@ const defaultData = {
       whatsapp: "91984063859",
       ritex: "800-7303",
     },
+    sindico: {
+      name: "Síndico do Condomínio",
+      phone: "(21) 99999-9999",
+      whatsapp: "21999999999",
+      availability: "Segunda à Sexta, 8h-18h",
+    },
+    subsindico: {
+      name: "Subsíndico do Condomínio",
+      phone: "(21) 88888-8888",
+      whatsapp: "21888888888",
+      availability: "Fins de semana e feriados",
+    },
   },
   salaoFestas: {
     price: "50,00",
@@ -403,7 +415,7 @@ const defaultData = {
         "Materiais de churrasco limpos",
         "Lixo ensacado e recolhido",
         "Banheiro higienizado",
-        "Geladeira desligada",
+        "Geladeira ligada",
       ],
       paymentWarning:
         "⚠️ Importante: A falta de pagamento cancela automaticamente a reserva.",
@@ -486,9 +498,9 @@ const saveDataWithBackup = (data) => {
     // Log para debug
     console.log("✅ Dados salvos com sucesso:", timestamp);
     console.log("📊 Tamanho dos dados:", dataString.length, "caracteres");
-    
+
     // Debug detalhado das chaves principais
-    if (data && typeof data === 'object') {
+    if (data && typeof data === "object") {
       const keys = Object.keys(data);
       console.log("🔑 Chaves principais salvas:", keys);
     }
@@ -500,10 +512,52 @@ const saveDataWithBackup = (data) => {
   }
 };
 
-// Função utilitária para carregar dados com fallbacks
-const loadDataWithFallback = () => {
+// Função para carregar configuração do arquivo remoto
+const loadRemoteConfig = async () => {
   try {
-    // Tenta carregar do localStorage principal
+    console.log("🌐 Tentando carregar configuração remota...");
+    const response = await fetch("./config.json", {
+      cache: "no-cache", // Sempre busca a versão mais recente
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
+
+    if (response.ok) {
+      const remoteConfig = await response.json();
+      console.log(
+        "✅ Configuração remota carregada:",
+        remoteConfig.lastUpdated
+      );
+
+      // Mescla com dados padrão para garantir compatibilidade
+      const mergedData = { ...defaultData, ...remoteConfig };
+      return mergedData;
+    } else {
+      console.log(
+        "⚠️ Configuração remota não disponível, usando fallback local"
+      );
+      return null;
+    }
+  } catch (error) {
+    console.log("⚠️ Erro ao carregar configuração remota:", error.message);
+    return null;
+  }
+};
+
+// Função utilitária para carregar dados com fallbacks inteligentes
+const loadDataWithFallback = async () => {
+  try {
+    // 1. PRIORIDADE MÁXIMA: Configuração remota (para todos os usuários)
+    const remoteData = await loadRemoteConfig();
+    if (remoteData) {
+      console.log("🌟 Usando configuração remota (global)");
+      return remoteData;
+    }
+
+    // 2. FALLBACK: localStorage (configurações locais do admin)
     let savedData = localStorage.getItem("panfleto_data");
 
     // Se não encontrou, tenta o backup
@@ -521,13 +575,14 @@ const loadDataWithFallback = () => {
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       const timestamp = localStorage.getItem("panfleto_data_timestamp");
-      console.log("✅ Dados carregados de:", timestamp);
+      console.log("✅ Dados locais carregados de:", timestamp);
       return parsedData;
     }
   } catch (error) {
     console.error("❌ Erro ao carregar dados:", error);
   }
 
+  console.log("📋 Usando configuração padrão");
   return null;
 };
 
@@ -536,13 +591,23 @@ export const DataProvider = ({ children }) => {
   const [lastSaved, setLastSaved] = useState(null);
 
   useEffect(() => {
-    // Carrega dados salvos com sistema de fallback
-    const savedData = loadDataWithFallback();
-    if (savedData) {
-      setData({ ...defaultData, ...savedData });
-      const timestamp = localStorage.getItem("panfleto_data_timestamp");
-      setLastSaved(timestamp);
-    }
+    // Carrega dados salvos com sistema de fallback inteligente
+    const loadInitialData = async () => {
+      try {
+        const savedData = await loadDataWithFallback();
+        if (savedData) {
+          setData({ ...defaultData, ...savedData });
+          const timestamp = localStorage.getItem("panfleto_data_timestamp");
+          setLastSaved(timestamp);
+        }
+      } catch (error) {
+        console.error("❌ Erro ao carregar dados iniciais:", error);
+        // Em caso de erro, usa dados padrão
+        setData(defaultData);
+      }
+    };
+
+    loadInitialData();
   }, []);
 
   const updateData = (newData) => {
@@ -552,7 +617,7 @@ export const DataProvider = ({ children }) => {
 
       if (success) {
         setLastSaved(new Date().toISOString());
-        
+
         // Força uma verificação adicional de sincronização
         setTimeout(() => {
           const verification = localStorage.getItem("panfleto_data");
@@ -579,8 +644,8 @@ export const DataProvider = ({ children }) => {
   const exportData = () => {
     try {
       const exportData = {
-        data: data,
-        timestamp: new Date().toISOString(),
+        ...data,
+        lastUpdated: new Date().toISOString(),
         version: "1.0",
       };
 
@@ -590,18 +655,61 @@ export const DataProvider = ({ children }) => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `configuracoes-condominio-${
-        new Date().toISOString().split("T")[0]
-      }.json`;
+      link.download = `config.json`; // Nome padrão que pode ser usado para substituir o arquivo remoto
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      console.log("✅ Configurações exportadas com sucesso");
+      console.log("✅ Configurações exportadas como config.json");
       return true;
     } catch (error) {
       console.error("❌ Erro ao exportar configurações:", error);
+      return false;
+    }
+  };
+
+  // Função para gerar config.json otimizado para deploy
+  const exportForDeploy = () => {
+    try {
+      const configForDeploy = {
+        version: "1.0",
+        lastUpdated: new Date().toISOString(),
+        building: data.building,
+        contacts: data.contacts,
+        salaoFestas: data.salaoFestas,
+        rules: data.rules,
+        systemTexts: data.systemTexts,
+        newResidentForm: {
+          enabled: data.newResidentForm?.enabled || false,
+          title: data.newResidentForm?.title || "Cadastro de Novo Morador",
+          subtitle:
+            data.newResidentForm?.subtitle ||
+            "Preencha as informações abaixo para se registrar como novo morador",
+          sendTo: data.newResidentForm?.sendTo || {
+            whatsapp: "21986505733",
+            adminEmail: "admin@edificio.com.br",
+            preferredMethod: "whatsapp",
+          },
+        },
+      };
+
+      const dataString = JSON.stringify(configForDeploy, null, 2);
+      const blob = new Blob([dataString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `config.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log("✅ Config.json para deploy exportado com sucesso");
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao exportar config para deploy:", error);
       return false;
     }
   };
@@ -669,6 +777,7 @@ export const DataProvider = ({ children }) => {
     updateData,
     resetData,
     exportData,
+    exportForDeploy,
     importData,
     getBackupInfo,
     lastSaved,
