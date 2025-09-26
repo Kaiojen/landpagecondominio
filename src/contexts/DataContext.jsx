@@ -547,6 +547,16 @@ const loadRemoteConfig = async () => {
   }
 };
 
+// Função para limpar dados corrompidos
+const clearCorruptedData = () => {
+  console.log("🧹 Limpando dados corrompidos...");
+  localStorage.removeItem("panfleto_data");
+  localStorage.removeItem("panfleto_data_backup");
+  localStorage.removeItem("panfleto_data_timestamp");
+  sessionStorage.removeItem("panfleto_data_session");
+  console.log("✅ Dados corrompidos removidos");
+};
+
 // Função utilitária para carregar dados com fallbacks inteligentes
 const loadDataWithFallback = async () => {
   try {
@@ -582,31 +592,47 @@ const loadDataWithFallback = async () => {
 
       if (localTime > remoteTime) {
         console.log("🏆 ADMIN: Usando configurações locais (mais recentes)");
-        return JSON.parse(savedData);
+        try {
+          const parsedLocalData = JSON.parse(savedData);
+          return { ...defaultData, ...parsedLocalData };
+        } catch (parseError) {
+          console.error("❌ Erro ao parsear dados locais:", parseError);
+          console.log("🔄 Fallback para configuração remota");
+          return { ...defaultData, ...remoteData };
+        }
       } else {
         console.log("🌟 GLOBAL: Usando configuração remota (mais recente)");
-        return remoteData;
+        return { ...defaultData, ...remoteData };
       }
     }
 
     // 4. Se só existe uma opção, usa ela
     if (remoteData && !savedData) {
       console.log("🌟 Usando configuração remota (única disponível)");
-      return remoteData;
+      return { ...defaultData, ...remoteData };
     }
 
     if (!remoteData && savedData) {
       console.log("✅ Usando configurações locais (única disponível)");
-      return JSON.parse(savedData);
+      try {
+        const parsedLocalData = JSON.parse(savedData);
+        return { ...defaultData, ...parsedLocalData };
+      } catch (parseError) {
+        console.error("❌ Erro ao parsear dados locais:", parseError);
+        console.log("🔄 Fallback para configuração padrão");
+        return null; // Retorna null para usar dados padrão
+      }
     }
 
     // 5. Se só existe remota, usa ela
     if (remoteData) {
       console.log("🌟 Usando configuração remota (fallback)");
-      return remoteData;
+      return { ...defaultData, ...remoteData };
     }
   } catch (error) {
     console.error("❌ Erro ao carregar dados:", error);
+    console.log("🔧 Tentando limpar dados corrompidos...");
+    clearCorruptedData();
   }
 
   console.log("📋 Usando configuração padrão");
@@ -617,13 +643,20 @@ export const DataProvider = ({ children }) => {
   const [data, setData] = useState(defaultData);
   const [lastSaved, setLastSaved] = useState(null);
 
+  // Disponibiliza função de limpeza globalmente para debug
+  useEffect(() => {
+    window.clearPanfletoData = clearCorruptedData;
+    console.log("🔧 DEBUG: Use window.clearPanfletoData() para limpar dados corrompidos");
+  }, []);
+
   useEffect(() => {
     // Carrega dados salvos com sistema de fallback inteligente
     const loadInitialData = async () => {
       try {
         const savedData = await loadDataWithFallback();
         if (savedData) {
-          setData({ ...defaultData, ...savedData });
+          // savedData já vem com merge feito na função loadDataWithFallback
+          setData(savedData);
           const timestamp = localStorage.getItem("panfleto_data_timestamp");
           setLastSaved(timestamp);
         }
