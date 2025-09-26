@@ -1,0 +1,5 @@
+[33m37be007[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m feat: Centralizar cards da Portaria e Administradora na seção de contatos
+[33m7dff913[m fix: Corrige scroll dos modals e melhora sistema de backup
+[33m3620b0c[m Implementa sistema de backup e sincronização de configurações
+[33m830071c[m chore: update
+[33m031d3eb[m � Fix: Correção do Rollup para deploy no Vercel

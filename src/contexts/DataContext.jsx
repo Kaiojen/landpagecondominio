@@ -550,15 +550,12 @@ const loadRemoteConfig = async () => {
 // Função utilitária para carregar dados com fallbacks inteligentes
 const loadDataWithFallback = async () => {
   try {
-    // 1. PRIORIDADE MÁXIMA: Configuração remota (para todos os usuários)
+    // 1. Carrega configuração remota
     const remoteData = await loadRemoteConfig();
-    if (remoteData) {
-      console.log("🌟 Usando configuração remota (global)");
-      return remoteData;
-    }
 
-    // 2. FALLBACK: localStorage (configurações locais do admin)
+    // 2. Carrega configurações locais (admin)
     let savedData = localStorage.getItem("panfleto_data");
+    let localTimestamp = localStorage.getItem("panfleto_data_timestamp");
 
     // Se não encontrou, tenta o backup
     if (!savedData) {
@@ -572,11 +569,41 @@ const loadDataWithFallback = async () => {
       console.log("🔄 Carregando do sessionStorage");
     }
 
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      const timestamp = localStorage.getItem("panfleto_data_timestamp");
-      console.log("✅ Dados locais carregados de:", timestamp);
-      return parsedData;
+    // 3. DECISÃO INTELIGENTE: Compara timestamps se ambos existem
+    if (remoteData && savedData && localTimestamp) {
+      const localTime = new Date(localTimestamp);
+      const remoteTime = remoteData.lastUpdated
+        ? new Date(remoteData.lastUpdated)
+        : new Date(0);
+
+      console.log("⚖️ Comparando configurações:");
+      console.log("📅 Local:", localTime.toLocaleString());
+      console.log("🌐 Remota:", remoteTime.toLocaleString());
+
+      if (localTime > remoteTime) {
+        console.log("🏆 ADMIN: Usando configurações locais (mais recentes)");
+        return JSON.parse(savedData);
+      } else {
+        console.log("🌟 GLOBAL: Usando configuração remota (mais recente)");
+        return remoteData;
+      }
+    }
+
+    // 4. Se só existe uma opção, usa ela
+    if (remoteData && !savedData) {
+      console.log("🌟 Usando configuração remota (única disponível)");
+      return remoteData;
+    }
+
+    if (!remoteData && savedData) {
+      console.log("✅ Usando configurações locais (única disponível)");
+      return JSON.parse(savedData);
+    }
+
+    // 5. Se só existe remota, usa ela
+    if (remoteData) {
+      console.log("🌟 Usando configuração remota (fallback)");
+      return remoteData;
     }
   } catch (error) {
     console.error("❌ Erro ao carregar dados:", error);
@@ -616,12 +643,18 @@ export const DataProvider = ({ children }) => {
       const success = saveDataWithBackup(updated);
 
       if (success) {
-        setLastSaved(new Date().toISOString());
+        const timestamp = new Date().toISOString();
+        setLastSaved(timestamp);
+
+        console.log("💾 ADMIN: Configurações salvas localmente em", timestamp);
+        console.log(
+          "🔧 Para publicar globalmente, use a aba 'Backup' > 'Publicar Mudanças'"
+        );
 
         // Força uma verificação adicional de sincronização
         setTimeout(() => {
           const verification = localStorage.getItem("panfleto_data");
-          if (!verification || JSON.parse(verification) !== updated) {
+          if (!verification) {
             console.warn("🔄 Ressincronizando dados...");
             saveDataWithBackup(updated);
           }
@@ -727,20 +760,53 @@ export const DataProvider = ({ children }) => {
           const importedData = JSON.parse(e.target.result);
 
           // Valida a estrutura dos dados
-          if (importedData.data && typeof importedData.data === "object") {
-            const mergedData = { ...defaultData, ...importedData.data };
-            const success = saveDataWithBackup(mergedData);
+          if (importedData && typeof importedData === "object") {
+            // Se tem versão, é um config.json válido
+            if (
+              importedData.version ||
+              importedData.building ||
+              importedData.contacts
+            ) {
+              const mergedData = { ...defaultData, ...importedData };
+              const success = saveDataWithBackup(mergedData);
 
-            if (success) {
-              setData(mergedData);
-              setLastSaved(new Date().toISOString());
-              console.log("✅ Configurações importadas com sucesso");
-              resolve(true);
+              if (success) {
+                setData(mergedData);
+                setLastSaved(new Date().toISOString());
+                console.log("✅ Configurações importadas com sucesso");
+                resolve(true);
+              } else {
+                reject(new Error("Erro ao salvar dados importados"));
+              }
+            } else if (
+              importedData.data &&
+              typeof importedData.data === "object"
+            ) {
+              // Formato antigo de backup
+              const mergedData = { ...defaultData, ...importedData.data };
+              const success = saveDataWithBackup(mergedData);
+
+              if (success) {
+                setData(mergedData);
+                setLastSaved(new Date().toISOString());
+                console.log(
+                  "✅ Configurações importadas com sucesso (formato antigo)"
+                );
+                resolve(true);
+              } else {
+                reject(new Error("Erro ao salvar dados importados"));
+              }
             } else {
-              reject(new Error("Erro ao salvar dados importados"));
+              reject(
+                new Error(
+                  "Formato de arquivo inválido - estrutura não reconhecida"
+                )
+              );
             }
           } else {
-            reject(new Error("Formato de arquivo inválido"));
+            reject(
+              new Error("Formato de arquivo inválido - não é um JSON válido")
+            );
           }
         } catch (error) {
           console.error("❌ Erro ao importar configurações:", error);

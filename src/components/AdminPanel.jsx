@@ -164,7 +164,8 @@ export const AdminPanel = ({ isOpen, onClose }) => {
             <Alert className="flex-1 mr-4 border-green-500 bg-green-50">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-700">
-                Alterações salvas com sucesso!
+                Alterações salvas localmente! Use "Publicar Mudanças" para
+                tornar globais.
               </AlertDescription>
             </Alert>
           )}
@@ -1726,7 +1727,7 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      Status do Backup
+                      Status das Configurações
                     </h4>
                     {(() => {
                       const backupInfo = getBackupInfo();
@@ -1928,26 +1929,27 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                   {/* Instruções Importantes */}
                   <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
                     <h4 className="font-semibold text-purple-900 mb-3">
-                      🚀 Como Publicar Suas Alterações
+                      🚀 Como Publicar Suas Alterações para Todos
                     </h4>
                     <div className="text-sm text-purple-800 space-y-2">
                       <p>
                         <strong>1. Faça as alterações</strong> no painel admin
+                        (salvas localmente)
                       </p>
                       <p>
                         <strong>2. Clique em "Publicar Mudanças"</strong> para
-                        baixar config.json
+                        baixar config.json atualizado
                       </p>
                       <p>
-                        <strong>3. Substitua o arquivo</strong> config.json na
-                        pasta <code>public/</code>
+                        <strong>3. Substitua o arquivo</strong> config.json nas
+                        pastas <code>public/</code> e <code>dist/</code>
                       </p>
                       <p>
                         <strong>4. Faça deploy</strong> da aplicação
                       </p>
                       <p className="mt-3 p-2 bg-purple-100 rounded">
                         ✨ <strong>Resultado:</strong> Todos os usuários verão
-                        suas alterações!
+                        suas alterações globalmente!
                       </p>
                     </div>
                   </div>
@@ -1955,20 +1957,24 @@ export const AdminPanel = ({ isOpen, onClose }) => {
                   {/* Instruções */}
                   <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                     <h4 className="font-semibold text-yellow-900 mb-3">
-                      💡 Sistema Inteligente
+                      💡 Sistema Inteligente Atualizado ✨
                     </h4>
                     <ul className="text-sm text-yellow-800 space-y-1">
                       <li>
-                        • <strong>Prioridade 1:</strong> Arquivo config.json
-                        (configurações globais)
+                        • <strong>Prioridade:</strong> Configurações mais
+                        recentes (local vs global)
                       </li>
                       <li>
-                        • <strong>Prioridade 2:</strong> Configurações locais
-                        (localStorage)
+                        • <strong>Admin local:</strong> Suas alterações têm
+                        prioridade enquanto forem mais recentes
                       </li>
                       <li>
-                        • <strong>Prioridade 3:</strong> Configurações padrão do
-                        sistema
+                        • <strong>Config global:</strong> Usado quando é mais
+                        recente ou quando não há config local
+                      </li>
+                      <li>
+                        • <strong>Fallback inteligente:</strong> Sistema sempre
+                        encontra a melhor configuração disponível
                       </li>
                       <li>
                         • <strong>Backup pessoal:</strong> Para transferir entre
